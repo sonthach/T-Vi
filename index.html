@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tử Vi Đẩu Số - Hệ Thống An Sao Hoàn Chỉnh</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+a,button,[onclick],[data-star-name]{cursor:pointer}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);padding:0;min-height:100vh;line-height:1.6;color:#333}
+.navbar{background:linear-gradient(135deg,#764ba2,#667eea);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.2);position:sticky;top:0;z-index:1000}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:20px;font-weight:bold;text-decoration:none}
+.nav-menu{display:flex;list-style:none;gap:5px;margin:0;padding:0}
+.nav-item{position:relative}
+.nav-link{color:#fff;text-decoration:none;padding:15px 20px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;transition:all .3s;border-radius:5px;cursor:pointer}
+.nav-link:hover{background:rgba(255,255,255,.1)}
+.dropdown-menu{position:absolute;top:100%;left:0;background:#fff;min-width:220px;box-shadow:0 5px 20px rgba(0,0,0,.2);border-radius:8px;padding:10px 0;opacity:0;visibility:hidden;transform:translateY(-10px);transition:all .3s;z-index:1000}
+.nav-item:hover .dropdown-menu,.nav-item.open .dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.dropdown-item{display:block;padding:12px 20px;color:#333;text-decoration:none;font-size:14px;transition:all .2s;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.dropdown-item:hover{background:#f5f5f5;color:#764ba2}
+.dropdown-divider{height:1px;background:#eee;margin:5px 0}
+.dropdown-header{padding:10px 20px;font-size:12px;color:#666;font-weight:bold;text-transform:uppercase;letter-spacing:.5px}
+.tabs-container{background:#fff;margin:0 20px 20px;border-radius:12px;box-shadow:0 4px 20px rgba(118,75,162,.12);overflow:hidden}
+.tabs-header{display:flex;background:linear-gradient(135deg,#f8f4ff,#f0f4ff);border-bottom:1px solid #e0d5f5;padding:0 10px;overflow-x:auto;overflow-y:hidden;min-height:48px;flex-wrap:nowrap;align-items:center}
+#tabsList{display:flex;flex-wrap:nowrap;overflow-x:auto;flex:1;min-width:0}
+.tab-item{padding:15px 25px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;font-size:14px;font-weight:500;color:#666;display:flex;align-items:center;gap:8px;white-space:nowrap;transition:all .3s;position:relative;flex-shrink:0;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.tab-item:hover{background:rgba(102,126,234,.05);color:#667eea}
+.tab-item.active{background:#fff;border-bottom-color:#764ba2;color:#764ba2;font-weight:600;box-shadow:0 -2px 8px rgba(118,75,162,.1)}
+.tab-close{margin-left:8px;background:none;border:none;color:#999;cursor:pointer;font-size:16px;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;touch-action:manipulation}
+.tab-close:hover{background:#ff6b6b;color:#fff}
+.add-tab-btn{margin-left:8px;padding:6px 14px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;min-width:40px;flex-shrink:0;border-radius:20px;transition:all .2s;box-shadow:0 2px 6px rgba(118,75,162,.3);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.add-tab-btn:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(118,75,162,.4)}
+.tabs-content{padding:20px}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.container{margin:0 20px 20px;background:#fff;padding:24px;border-radius:12px;box-shadow:0 4px 16px rgba(118,75,162,.1)}
+h1{text-align:center;color:#764ba2;margin-bottom:10px;font-size:2.2em}
+.form-section{background:linear-gradient(135deg,#fafafa,#f5f0ff);padding:20px;border-radius:12px;margin-bottom:24px;border:1px solid #e0d5f5;box-shadow:0 2px 8px rgba(118,75,162,.06)}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:15px}
+label{display:block;margin-bottom:5px;color:#333;font-weight:bold;font-size:14px}
+input,select{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px;transition:border-color .3s}
+input:focus,select:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+.btn-group{display:flex;gap:10px;margin-top:20px}
+.btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:13px 24px;border:none;border-radius:10px;font-size:16px;cursor:pointer;flex:1;transition:all .25s;font-weight:600;letter-spacing:.3px;box-shadow:0 3px 10px rgba(118,75,162,.3);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(118,75,162,.45)}
+.btn:active{transform:translateY(0);box-shadow:0 2px 6px rgba(118,75,162,.3)}
+.btn-secondary{background:linear-gradient(135deg,#95a5a6,#7f8c8d)}
+.la-so-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:3px;max-width:1200px;margin:20px auto;background:#e8e0f0;border:2px solid #9b59b6;border-radius:8px;overflow:hidden;padding:3px}
+.cung-card{background:#fff;border:1px solid #ccc;padding:8px;height:100%;min-height:180px;display:flex;flex-direction:column;box-sizing:border-box;transition:box-shadow .2s;border-radius:4px}
+.cung-card:hover{box-shadow:0 4px 16px rgba(118,75,162,.25);border-color:#764ba2;z-index:10}
+.cung-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;padding-bottom:4px;border-bottom:2px solid #e8d5f5;flex-shrink:0}
+.cung-ten{font-weight:700;color:#6c3483;font-size:13px;flex:1}
+.cung-than{background:linear-gradient(135deg,#2980b9,#3498db);color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold;margin-left:4px;box-shadow:0 1px 4px rgba(52,152,219,.4)}
+.cung-content{flex:1;display:flex;flex-direction:column;font-size:11.5px;line-height:1.65;color:#444;min-height:0}
+.chinh-tinh-section{text-align:center;margin:4px 0;padding:6px 0;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;min-height:30px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,#fafafa,#f5f0ff)}
+.chinh-tinh-item{font-weight:bold;font-size:12.5px;text-transform:uppercase;margin:2px 0;letter-spacing:.3px}
+.khong-chinh-tinh{min-height:28px;border-top:1px solid transparent;border-bottom:1px solid transparent}
+.sao-columns{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;flex:1;min-height:0;overflow:hidden}
+.sao-tot{border-right:1px solid #eee;padding-right:4px;overflow-y:auto}
+.sao-xau{padding-left:4px;overflow-y:auto}
+.sao-item{margin-bottom:2px;font-size:10.5px;line-height:1.4;padding:1px 3px;border-radius:2px}
+.sao-item:hover{background:#f0eafa;border-radius:3px}
+.tuan-triet-section{text-align:center;margin-top:6px;padding:4px 0;border-top:1px solid #ddd;flex-shrink:0}
+.tuan-triet-item{font-weight:bold;text-transform:uppercase;color:#666;font-size:9px}
+.footer-section{display:flex;flex-direction:column;margin-top:auto;padding-top:4px;border-top:1px solid #ddd;flex-shrink:0;gap:1px}
+.footer-labels{display:flex;width:100%;padding-bottom:2px;border-bottom:1px dashed #e8d5f5;margin-bottom:1px}
+.footer-label{flex:1;text-align:center;font-size:7.5px;color:#c0a0d0;text-transform:uppercase;letter-spacing:.3px}
+.footer-values{display:flex;width:100%}
+.luu-nien{flex:1;text-align:center;font-size:11px;color:#000!important;font-weight:bold;border-right:1px solid #eee;padding-right:5px}
+.truong-sinh{flex:1;text-align:center;font-size:10px;color:#666;border-right:1px solid #eee;padding-right:5px}
+.dai-han{flex:1;text-align:center;font-size:11px;font-weight:bold;color:#999}
+.center-cell{grid-column:span 2;grid-row:span 2;background:linear-gradient(160deg,#f8f4ff 0%,#eef2ff 100%);padding:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:2px solid #9b59b6;position:relative;overflow:hidden}
+.center-cell::before{content:'⭐';position:absolute;font-size:80px;opacity:.04;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.center-data{font-size:13px;color:#333;text-align:center;line-height:1.9;position:relative;z-index:1}
+.mau-hoa{color:#e74c3c!important;font-weight:bold}
+.mau-thuy{color:#3498db!important;font-weight:bold}
+.mau-moc{color:#27ae60!important;font-weight:bold}
+.mau-kim{color:#7f8c8d!important;font-weight:bold}
+.mau-tho{color:#d68910!important;font-weight:bold}
+.star-clickable{cursor:pointer;position:relative;transition:all .2s;touch-action:manipulation;-webkit-tap-highlight-color:rgba(118,75,162,.2)}
+.star-clickable:hover{text-decoration:underline;transform:translateY(-1px)}
+.star-clickable.chinh-tinh-item:hover{text-decoration:underline;transform:scale(1.05)}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(30,10,50,.55);justify-content:center;align-items:center;z-index:2000;display:none;backdrop-filter:blur(3px)}
+.modal-content{background:#fff;padding:28px;border-radius:16px;max-width:500px;width:90%;max-height:82vh;overflow-y:auto;box-shadow:0 20px 60px rgba(118,75,162,.25);animation:modalIn .25s ease}
+@keyframes modalIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #764ba2}
+.modal-title{color:#764ba2;font-size:1.5em;margin:0}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:#666;transition:color .3s}
+.modal-close:hover{color:#333}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end}
+.star-detail-section{margin-bottom:15px}
+.star-detail-title{font-weight:bold;color:#764ba2;margin-bottom:5px;font-size:16px}
+.star-detail-content{color:#555;line-height:1.6;font-size:14px}
+.star-ngu-hanh{display:inline-block;padding:3px 8px;border-radius:4px;font-weight:bold;font-size:12px;margin-right:5px}
+.ngu-hanh-hoa{background:#ffeaea;color:#e74c3c}
+.ngu-hanh-thuy{background:#e8f4fc;color:#3498db}
+.ngu-hanh-moc{background:#eaf7ee;color:#27ae60}
+.ngu-hanh-kim{background:#f5f5f5;color:#7f8c8d}
+.ngu-hanh-tho{background:#fef5e6;color:#d68910}
+.star-category{display:inline-block;padding:3px 8px;border-radius:4px;font-weight:bold;font-size:12px;margin-right:5px}
+.category-chinh-tinh{background:#e8f4fc;color:#3498db}
+.category-phu-tinh{background:#eaf7ee;color:#27ae60}
+.category-tot,.category-phu-tinh-tot{background:#eaf7ee;color:#27ae60}
+.category-xau,.category-phu-tinh-xau{background:#ffeaea;color:#e74c3c}
+.category-trung-tinh,.category-truong-sinh,.category-hoa-tinh{background:#f5f5f5;color:#7f8c8d}
+.star-property{margin:3px 0;padding-left:15px;position:relative}
+.star-property:before{content:"•";position:absolute;left:0;color:#764ba2}
+.ai-section{margin-top:15px;padding-top:15px;border-top:2px solid #e8d5f5}
+.ai-section-title{font-weight:bold;color:#764ba2;font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ai-content{color:#333;line-height:1.8;font-size:14px;white-space:pre-wrap}
+.ai-loading{color:#999;font-style:italic;font-size:13px;display:flex;align-items:center;gap:8px}
+.ai-loading-dot{display:inline-block;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.ai-error{color:#e74c3c;font-size:13px;font-style:italic}
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.9);justify-content:center;align-items:center;z-index:3000;flex-direction:column;display:none}
+.loading-spinner{border:5px solid #f3f3f3;border-top:5px solid #764ba2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;margin-bottom:15px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.loading-text{font-size:18px;color:#764ba2;font-weight:bold}
+.notification{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:4000;max-width:320px;display:none;font-size:14px;font-weight:500;line-height:1.5;animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.notification.type-success{background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff}
+.notification.type-error{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff}
+.notification.type-warning{background:linear-gradient(135deg,#e67e22,#f39c12);color:#fff}
+.notification.type-info{background:linear-gradient(135deg,#2980b9,#3498db);color:#fff}
+.hidden{display:none!important}
+.dai-han-btn{cursor:pointer;text-decoration:underline;color:#764ba2}
+.dai-han-btn:hover{color:#e67e22}
+.thang-han{font-size:9.5px;color:#1a6b2e;font-weight:bold;background:#eafaf1;border-radius:3px;padding:1px 4px;margin:1px 1px;display:inline-block;line-height:1.5}
+.thang-han.thang-hien-tai{background:#fff3cd;color:#856404;border:1px solid #ffc107}
+.thang-han-section{text-align:center;margin-top:3px;padding-top:3px;border-top:1px dashed #ccc;flex-shrink:0;line-height:1.6}
+.sao-luu-section{margin-top:3px;padding:3px 3px 0;border-top:1px dashed #c8a0e0;flex-shrink:0;background:linear-gradient(135deg,rgba(200,160,224,.06),rgba(102,126,234,.06));border-radius:0 0 3px 3px}
+.sao-luu-item{font-size:10px;color:#5b2c6f;font-weight:bold;line-height:1.5;padding:0 2px}
+.sao-luu-item.sao-luu-xau{color:#c0392b}
+.sao-luu-item.sao-luu-hoa{color:#1a5276;font-style:italic}
+.star-card{border:1px solid #ddd;border-radius:8px;padding:10px;cursor:pointer;transition:all .2s}
+.star-card-name{font-weight:bold;color:#764ba2;margin-bottom:5px}
+.star-card-meta{font-size:11px;color:#666;display:flex;justify-content:space-between}
+.star-card-cat{padding:2px 5px;border-radius:3px}
+.gio-display-box{padding:8px 12px;background:#f0eafa;border-radius:8px;font-weight:bold;color:#764ba2;font-size:13px;white-space:nowrap;min-width:60px;text-align:center}
+.lunar-display-box{padding:12px;border:2px solid #ddd;border-radius:8px;font-size:14px;color:#555;background:#f9f9f9;min-height:47px}
+.namxem-display-box{padding:8px 12px;background:#f0eafa;border-radius:8px;font-weight:bold;color:#764ba2;font-size:12px;white-space:nowrap;min-width:80px;text-align:center}
+.dai-han-modal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.dai-han-nam{background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:8px 6px;text-align:center;font-size:12px}
+.dai-han-nam.active-year{background:#fff3e0;border-color:#e67e22}
+.dai-han-nam .dl-year{font-weight:bold;color:#333;font-size:13px}
+.dai-han-nam .al-chi{color:#764ba2;font-size:11px;margin-top:2px}
+.dai-han-nam .tuoi{color:#888;font-size:10px}
+.tu-hoa-panel{max-width:1200px;margin:0 auto 16px;background:#fff;border-radius:10px;border:1px solid #d7bde2;overflow:hidden;box-shadow:0 2px 8px rgba(118,75,162,.1)}
+.tu-hoa-title{background:linear-gradient(135deg,#8e44ad,#667eea);color:#fff;padding:8px 16px;font-weight:600;font-size:13px;letter-spacing:.3px}
+.tu-hoa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.tu-hoa-item{padding:10px 12px;border-right:1px solid #f0e6ff;text-align:center;transition:background .2s}
+.tu-hoa-item:hover{background:#faf5ff}
+.tu-hoa-item:last-child{border-right:none}
+.tu-hoa-label{font-size:11px;color:#999;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
+.tu-hoa-sao{font-weight:bold;font-size:13px;margin-bottom:3px}
+.tu-hoa-cung{font-size:11px;color:#555;background:#f5f0ff;padding:2px 8px;border-radius:10px;display:inline-block}
+.hoa-loc{color:#27ae60}.hoa-quyen{color:#e67e22}.hoa-khoa{color:#3498db}.hoa-ky{color:#e74c3c}
+@media(max-width:768px){
+  .navbar{padding:0 10px;height:auto;flex-wrap:wrap}
+  .nav-menu{flex-wrap:wrap;justify-content:center}
+  .nav-link{padding:10px 15px;font-size:13px;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+  input,select,button{-webkit-appearance:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+  .btn{font-size:16px;padding:14px 20px;touch-action:manipulation}
+  .add-tab-btn{touch-action:manipulation}
+  .tab-item{touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+  .star-clickable{-webkit-tap-highlight-color:rgba(0,0,0,0)}
+  .cung-card:hover{box-shadow:none;border-color:#ccc}
+  .dropdown-menu{position:static;opacity:1;visibility:visible;transform:none;display:none;width:100%}
+  .nav-item:hover .dropdown-menu,.nav-item.open .dropdown-menu{display:block}
+  .container{padding:15px;margin:10px}
+  .tabs-container{margin:10px}
+  .tabs-header{padding:0 5px}
+  .tab-item{padding:12px 15px;font-size:13px}
+  h1{font-size:1.8em}
+  .form-row{grid-template-columns:1fr}
+  .btn-group{flex-direction:column}
+  .la-so-grid{grid-template-columns:repeat(2,1fr);font-size:10px}
+  .center-cell{grid-column:span 2;grid-row:span 2;order:5}
+  .cung-card{min-height:150px}
+  .tu-hoa-grid{grid-template-columns:repeat(2,1fr)}
+  .modal-content{padding:20px;width:95%}
+}
+@media(max-width:480px){
+  .la-so-grid{grid-template-columns:1fr}
+  .center-cell{grid-column:span 1}
+  .tab-item{padding:10px 12px;font-size:12px}
+  .modal-content{padding:15px}
+}
+@media print{
+  .navbar,.tabs-header,.btn-group,.form-section{display:none!important}
+.dai-han-modal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.dai-han-nam{background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:8px 6px;text-align:center;font-size:12px}
+.dai-han-nam.active-year{background:#fff3e0;border-color:#e67e22}
+.dai-han-nam .dl-year{font-weight:bold;color:#333;font-size:13px}
+.dai-han-nam .al-chi{color:#764ba2;font-size:11px;margin-top:2px}
+.dai-han-nam .tuoi{color:#888;font-size:10px}
+.tu-hoa-panel{display:none!important}
+  body{background:#fff;padding:0;font-size:11px}
+  .container,.tabs-container{box-shadow:none;margin:0;padding:0;border:none}
+  .tab-pane{display:block!important}
+  .tab-pane:not(.active){display:none!important}
+  .la-so-grid{break-inside:avoid;max-width:100%;margin:0;border:1px solid #999}
+  .cung-card{min-height:120px;page-break-inside:avoid}
+  .modal-overlay{display:none!important}
+  .cung-ten{font-size:11px}.chinh-tinh-item{font-size:10px}.sao-item{font-size:8px}
+  .footer-label{font-size:6px}.luu-nien,.dai-han{font-size:9px}
+  .print-header{display:block!important}
+}
+.print-header{display:none;text-align:center;padding:10px 0 5px;border-bottom:2px solid #764ba2;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">⏳ Đang an sao và tính toán...</div>
+</div>
+<div id="notification" class="notification"></div>
+<nav class="navbar">
+  <a href="#" class="logo"><span>⭐ Tử Vi Đẩu Số</span></a>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a href="#" class="nav-link"><span>📁 Tập tin</span></a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" id="menuNewTab">➕ Tab mới</a></li>
+        <li><a class="dropdown-item" href="#" id="menuCloseTab">✕ Đóng tab</a></li>
+        <div class="dropdown-divider"></div>
+        <li><a class="dropdown-item" href="#" id="menuSaveChart">💾 Lưu lá số</a></li>
+        <li><a class="dropdown-item" href="#" id="menuSaveToFile">📁 Lưu thành file</a></li>
+        <li><a class="dropdown-item" href="#" id="menuOpenFile">📂 Mở file</a></li>
+        <div class="dropdown-divider"></div>
+        <li><a class="dropdown-item" href="#" id="menuExportImage">🖼️ Xuất hình ảnh</a></li>
+        <li><a class="dropdown-item" href="#" id="menuPrint">🖨️ In lá số</a></li>
+        <div class="dropdown-divider"></div>
+        <li><a class="dropdown-item" href="#" id="menuResetForm">🔄 Làm lại</a></li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link"><span>📚 Quản lý</span></a>
+      <ul class="dropdown-menu">
+        <div class="dropdown-header">Lá số đã lưu</div>
+        <li><a class="dropdown-item" href="#" id="menuShowSaved">📂 Xem lá số đã lưu</a></li>
+        <li><a class="dropdown-item" href="#" id="menuManageFiles">🗂️ Quản lý file</a></li>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-header">Import/Export</div>
+        <li><a class="dropdown-item" href="#" id="menuImportData">📥 Import dữ liệu</a></li>
+        <li><a class="dropdown-item" href="#" id="menuExportData">📤 Export dữ liệu</a></li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link"><span>👁️ Xem</span></a>
+      <ul class="dropdown-menu" id="viewMenu">
+        <div class="dropdown-header">Chuyển tab</div>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link"><span>⭐ Sao</span></a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" id="menuStarDictionary">📚 Từ điển sao</a></li>
+        <li><a class="dropdown-item" href="#" id="menuStarSearch">🔍 Tìm kiếm sao</a></li>
+        <div class="dropdown-divider"></div>
+        <li><a class="dropdown-item" href="#" id="menuChinhTinhInfo">✨ Chính tinh</a></li>
+        <li><a class="dropdown-item" href="#" id="menuPhuTinhInfo">🌟 Phụ tinh</a></li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link"><span>⚙️ Cài đặt</span></a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" id="menuSettings">🔧 Cài đặt hiển thị</a></li>
+        <li><a class="dropdown-item" href="#" id="menuShortcuts">⌨️ Phím tắt</a></li>
+        <div class="dropdown-divider"></div>
+        <li><a class="dropdown-item" href="#" id="menuClearData">🗑️ Xóa dữ liệu</a></li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link"><span>❓ Trợ giúp</span></a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" id="menuGuide">📖 Hướng dẫn</a></li>
+        <li><a class="dropdown-item" href="#" id="menuAbout">ℹ️ Giới thiệu</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<div class="tabs-container">
+  <div class="tabs-header">
+    <div id="tabsList"></div>
+    <button type="button" class="add-tab-btn" id="addTabBtn" title="Thêm tab mới" onclick="window.tuviApp&&window.tuviApp.tm&&window.tuviApp.tm.addTab()">+</button>
+  </div>
+  <div class="tabs-content" id="tabsContent"></div>
+</div>
+
+<!-- Star Detail Modal -->
+<div id="starDetailModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:600px">
+    <div class="modal-header">
+      <h3 class="modal-title" id="starModalTitle">⭐ Chi tiết sao</h3>
+      <button type="button" class="modal-close" id="starModalClose">×</button>
+    </div>
+    <div class="modal-body" id="starModalBody"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="window.tuviApp.closeModal('starDetailModal')">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Star Dictionary Modal -->
+<div id="starDictionaryModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:800px;max-height:85vh">
+    <div class="modal-header">
+      <h3 class="modal-title">📚 Từ điển sao tử vi</h3>
+      <button type="button" class="modal-close" id="dictionaryModalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:20px">
+        <input type="text" id="starSearchInput" placeholder="🔍 Tìm kiếm sao..." style="width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:16px">
+      </div>
+      <div id="starDictionaryContent" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="window.tuviApp.closeModal('starDictionaryModal')">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Saved Charts Modal -->
+<div id="savedChartsModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:800px">
+    <div class="modal-header">
+      <h3 class="modal-title">📂 Lá số đã lưu</h3>
+      <button type="button" class="modal-close" id="savedModalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="savedChartsList" style="max-height:400px;overflow-y:auto;margin-bottom:20px"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="window.tuviApp.closeModal('savedChartsModal')">Đóng</button>
+      <button type="button" class="btn" style="background:#e74c3c" onclick="window.tuviApp.clearAllSavedCharts()">🗑️ Xóa tất cả</button>
+    </div>
+  </div>
+</div>
+
+<!-- File Manager Modal -->
+<div id="fileManagerModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:800px">
+    <div class="modal-header">
+      <h3 class="modal-title">🗂️ Quản lý file</h3>
+      <button type="button" class="modal-close" id="fileModalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:10px;margin-bottom:20px">
+        <button type="button" class="btn" onclick="window.tuviApp.saveCurrentToFile()" style="flex:1">💾 Lưu thành file</button>
+        <button type="button" class="btn" onclick="document.getElementById('fileOpenInput').click()" style="flex:1">📂 Mở từ file</button>
+      </div>
+      <div id="fileList" style="max-height:300px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:10px"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="window.tuviApp.closeModal('fileManagerModal')">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileOpenInput" accept=".json" style="display:none">
+<input type="file" id="fileImportInput" accept=".json,.txt" style="display:none">
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:520px">
+    <div class="modal-header">
+      <h3 class="modal-title">⚙️ Cài đặt</h3>
+      <button type="button" class="modal-close" id="settingsModalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:20px">
+        <label style="font-weight:bold;color:#333;display:block;margin-bottom:8px">
+          🤖 Claude API Key
+        </label>
+        <div style="display:flex;gap:8px">
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." 
+            style="flex:1;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:14px;font-family:monospace">
+          <button type="button" onclick="window.tuviApp.toggleApiKeyVisibility()" id="apiKeyToggle"
+            style="padding:10px 14px;border:2px solid #ddd;border-radius:8px;background:#f5f5f5;cursor:pointer;font-size:16px">👁</button>
+        </div>
+        <div id="apiKeyStatus" style="margin-top:8px;font-size:13px;color:#888"></div>
+        <div style="margin-top:12px;padding:12px;background:#f0f8ff;border-radius:8px;font-size:13px;color:#555;line-height:1.7">
+          <strong>📋 Hướng dẫn lấy API key:</strong><br>
+          1. Truy cập <a href="https://console.anthropic.com" target="_blank" style="color:#764ba2">console.anthropic.com</a><br>
+          2. Đăng ký / đăng nhập tài khoản<br>
+          3. Vào mục <strong>API Keys</strong> → <strong>Create Key</strong><br>
+          4. Copy key (bắt đầu bằng <code>sk-ant-</code>) và dán vào ô trên<br>
+          5. Nhấn <strong>Lưu</strong> — key được lưu trong máy, không gửi đi đâu khác
+        </div>
+        <div style="margin-top:10px;padding:10px;background:#fff8e1;border-radius:8px;font-size:12px;color:#856404">
+          ⚠️ Lưu ý: sử dụng API sẽ tốn phí theo lượt dùng (~$0.003/lần tra cứu sao).
+          Xem chi phí tại <a href="https://anthropic.com/pricing" target="_blank" style="color:#764ba2">anthropic.com/pricing</a>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="window.tuviApp.closeModal('settingsModal')">Hủy</button>
+      <button type="button" class="btn" onclick="window.tuviApp.saveApiKey()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const _TZ=7;
+function _INT(d){return Math.floor(d)}
+function _jdFromDate(d,m,y){const a=_INT((14-m)/12),yr=y+4800-a,mo=m+12*a-3;return d+_INT((153*mo+2)/5)+365*yr+_INT(yr/4)-_INT(yr/100)+_INT(yr/400)-32045}
+function _jdToDate(jd){const a=jd+32044,b=_INT((4*a+3)/146097),c=a-_INT(b*146097/4),d=_INT((4*c+3)/1461),e=c-_INT(1461*d/4),m=_INT((5*e+2)/153);return[e-_INT((153*m+2)/5)+1,m+3-12*_INT(m/10),b*100+d-4800+_INT(m/10)]}
+function _newMoon(k){const T=k/1236.85,T2=T*T,T3=T2*T,dr=Math.PI/180;let jd=2415020.75933+29.53058868*k+0.0001178*T2-0.000000155*T3+0.00033*Math.sin((166.56+132.87*T-0.009173*T2)*dr);const M=359.2242+29.10535608*k-0.0000333*T2-0.00000347*T3,Mpr=306.0253+385.81691806*k+0.0107306*T2+0.00001236*T3,F=21.2964+390.67050646*k-0.0016528*T2-0.00000239*T3;let C=(0.1734-0.000393*T)*Math.sin(M*dr)+0.0021*Math.sin(2*dr*M)-0.4068*Math.sin(Mpr*dr)+0.0161*Math.sin(2*dr*Mpr)-0.0004*Math.sin(3*dr*Mpr)+0.0104*Math.sin(2*dr*F)-0.0051*Math.sin(dr*(M+Mpr))-0.0074*Math.sin(dr*(M-Mpr))+0.0004*Math.sin(dr*(2*F+M))-0.0004*Math.sin(dr*(2*F-M))-0.0006*Math.sin(dr*(2*F+Mpr))+0.001*Math.sin(dr*(2*F-Mpr))+0.0005*Math.sin(dr*(M+2*Mpr));const dt=T<-11?0.001+0.000839*T+0.0002261*T2-0.00000845*T3-0.000000081*T*T3:-0.000278+0.000265*T+0.000262*T2;return _INT(jd+C-dt+0.5+_TZ/24)}
+function _sunLong(jdn){const T=(jdn-2451545.5-_TZ/24)/36525,T2=T*T,dr=Math.PI/180,M=357.5291+35999.0503*T-0.0001559*T2,L0=280.46645+36000.76983*T+0.0003032*T2;let L=L0+(1.9146-0.004817*T-0.000014*T2)*Math.sin(dr*M)+(0.019993-0.000101*T)*Math.sin(2*dr*M)+0.00029*Math.sin(3*dr*M);const om=125.04-1934.136*T;L=L-0.00569-0.00478*Math.sin(om*dr);L=L*dr;L-=Math.PI*2*_INT(L/(Math.PI*2));return _INT(L/Math.PI*6)}
+function _month11(yy){const off=_jdFromDate(31,12,yy)-2415021,k=_INT(off/29.530588853);let nm=_newMoon(k+1);if(_sunLong(nm)>=9)nm=_newMoon(k);return nm}
+function _leapOffset(a11){const k=_INT((a11-2415021.076998695)/29.530588853+0.5);let i=1,arc=_sunLong(_newMoon(k+i)),last;do{last=arc;i++;arc=_sunLong(_newMoon(k+i))}while(arc!==last&&i<14);return i-1}
+function solar2Lunar(dd,mm,yy){
+  const jd=_jdFromDate(dd,mm,yy),k=_INT((jd-2415021.076998695)/29.530588853);
+  let ms=_newMoon(k+1);if(ms>jd)ms=_newMoon(k);
+  let a11=_month11(yy),b11=a11,lunarYear;
+  if(a11>=ms){lunarYear=yy;a11=_month11(yy-1)}else{lunarYear=yy+1;b11=_month11(yy+1)}
+  const lunarDay=jd-ms+1,diff=_INT((ms-a11)/29);
+  let lunarMonth=diff+11,lunarLeap=0;
+  if(b11-a11>365){const lmd=_leapOffset(a11);if(diff>=lmd){lunarMonth=diff+10;if(diff===lmd)lunarLeap=1}}
+  if(lunarMonth>12)lunarMonth-=12;
+  if(lunarMonth>=11&&diff<4)lunarYear--;
+  return{ngay:lunarDay,thang:lunarMonth,nam:lunarYear,nhuan:lunarLeap===1}
+}
+const THIEN_CAN=['Giáp','Ất','Bính','Đinh','Mậu','Kỷ','Canh','Tân','Nhâm','Quý'];
+const DIA_CHI=['Tý','Sửu','Dần','Mão','Thìn','Tị','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'];
+const CUNG_VI=['Mệnh','Phụ Mẫu','Phúc Đức','Điền Trạch','Quan Lộc','Nô Bộc','Thiên Di','Tật Ách','Tài Bạch','Tử Nữ','Phu Thê','Huynh Đệ'];
+const LAYOUT_DIA_CHI=[5,6,7,8,4,-1,-1,9,3,-1,-1,10,2,1,0,11];
+const CHINH_TINH=new Set(['Tử Vi','Thiên Phủ','Thái Dương','Vũ Khúc','Thiên Đồng','Liêm Trinh','Thái Âm','Tham Lang','Cự Môn','Thiên Tướng','Thiên Lương','Thất Sát','Phá Quân','Thiên Cơ']);
+const SAO_XAU=new Set(['Thiên Sứ','Thái Tuế','Quan Phủ','Lưu Hà','Thiên Không','Tiểu Hao','Đại Hao','Phi Liêm','Thiên Riêu','Thiên Thương','Trực Phù','Phục Binh','Đà La','Kình Dương','Hỏa Tinh','Linh Tinh','Địa Không','Địa Kiếp','Thiên Khốc','Thiên Hư','Kiếp Sát','Phá Toái','Cô Thần','Quả Tú','Thiên Hình','Bệnh Phù','Tang Môn','Bạch Hổ','Điếu Khách','Tuế Phá','Quan Phù','Tử Phù','Thiên La','Địa Võng','Hóa Kỵ']);
+const TRUONG_SINH_VONG=new Set(['Trường Sinh','Mộc Dục','Quan Đới','Lâm Quan','Đế Vượng','Suy','Bệnh','Tử','Mộ','Tuyệt','Thai','Dưỡng']);
+const TUAN_TRIET=new Set(['Tuần','Triệt']);
+const TRUONG_SINH_NGU_HANH={'Trường Sinh':'thuy','Mộc Dục':'moc','Quan Đới':'kim','Lâm Quan':'hoa','Đế Vượng':'tho','Suy':'tho','Bệnh':'hoa','Tử':'kim','Mộ':'thuy','Tuyệt':'kim','Thai':'hoa','Dưỡng':'moc'};
+const NGU_HANH_SAO={
+  hoa:new Set(['Thái Dương','Quan Phủ','Thái Tuế','Địa Kiếp','Địa Không','Thiên Không','Lực Sĩ','Thiên Việt','Tiểu Hao','Quan Phù','Phá Toái','Lưu Niên Văn Tinh','Đẩu Quân','Thiên Quan','Thiên Giải','Nguyệt Đức','Thiên Mã','Thiên Khôi','Hỷ Thần','Kiếp Sát','Điếu Khách','Đại Hao','Phục Binh','Liêm Trinh','Hỏa Tinh','Linh Tinh','Thiên Hình','Tuế Phá','Thiếu Dương','Thiếu Âm','Tang Môn','Long Đức','Bạch Hổ','Phúc Đức','Trực Phù','Hóa Quyền']),
+  thuy:new Set(['Thiên Sứ','Lưu Hà','Bác Sĩ','Phá Quân','Cự Môn','Thiên Tướng','Thiên Đồng','Hữu Bật','Long Trì','Văn Khúc','Hóa Quyền','Long Đức','Tam Thai','Thiên Khốc','Hóa Khoa','Thiên Riêu','Thiên Y','Thiên Hỷ','Tang Môn','Thiên Phúc','Địa Giải','Thiên Không','Đào Hoa','Hóa Kỵ']),
+  moc:new Set(['Giải Thần','Thiên Cơ','Tướng Quân','Ân Quang','Đường Phù','Bát Tọa','Hóa Lộc','Tham Lang','Thiên Lương','Thanh Long','Phong Cáo','Thiên Trù','Thai Phụ','Hóa Khoa']),
+  kim:new Set(['Đà La','Kình Dương','Tử Phù','Tấu Thư','Thai Phụ','Hoa Cái','Bạch Hổ','Vũ Khúc','Thất Sát','Trực Phù','Văn Xương','Thái Âm','Thiếu Dương','Thiếu Âm']),
+  tho:new Set(['Phượng Các','Cô Thần','Quốc Ấn','Địa Giải','Bệnh Phù','Thiên Tài','Thiên Thọ','Thiên Thương','Thiên Quý','Thiên La','Quả Tú','Tử Vi','Thiên Phủ','Lộc Tồn','Tả Phù','Địa Võng','Thái Tuế','Quan Phù','Tử Phù','Tuế Phá','Hóa Lộc'])
+};
+const STAR_DESCRIPTIONS={
+  'Tử Vi':{category:'chinh-tinh',nguHanh:'tho',yNghia:'Là sao Đế tinh, chủ về quyền uy, địa vị, lãnh đạo',tinhChat:'Tốt, chủ quyền lực, danh vọng',tacDung:'Chủ về địa vị xã hội, khả năng lãnh đạo, uy tín',dacTinh:'Sao chủ về quyền uy, thường đem lại địa vị cao, danh vọng',noiDung:'Tử Vi là chủ tinh trong hệ thống sao tử vi, tượng trưng cho hoàng đế, quyền uy. Khi đắc địa đem lại quyền lực, danh vọng. Khi hãm địa có thể gây kiêu ngạo, độc đoán.'},
+  'Thiên Phủ':{category:'chinh-tinh',nguHanh:'tho',yNghia:'Là sao chủ về tài sản, kho báu, của cải',tinhChat:'Tốt, chủ tài lộc, tích trữ',tacDung:'Chủ về tài sản, tài chính, khả năng tích lũy',dacTinh:'Sao chủ về tài lộc, thường đem lại của cải, sự giàu có',noiDung:'Thiên Phủ là sao chủ về tài sản, kho tàng. Khi đắc địa đem lại sự giàu có, sung túc. Khi hãm địa có thể gây lãng phí, khó giữ tiền bạc.'},
+  'Thái Dương':{category:'chinh-tinh',nguHanh:'hoa',yNghia:'Là sao chủ về ánh sáng, danh tiếng, sự quảng đại',tinhChat:'Tốt, chủ danh tiếng, quảng đại',tacDung:'Chủ về danh tiếng, sự nổi tiếng, tính quảng đại',dacTinh:'Sao chủ về ánh sáng, thường đem lại danh tiếng, sự quảng đại',noiDung:'Thái Dương là sao chủ về ánh sáng, danh tiếng. Khi đắc địa (ban ngày) rất sáng, đem lại danh tiếng lớn. Khi hãm địa (ban đêm) danh tiếng khó đạt.'},
+  'Vũ Khúc':{category:'chinh-tinh',nguHanh:'kim',yNghia:'Là sao chủ về tài chính, kim loại, kỹ thuật',tinhChat:'Trung tính, chủ tài chính, kỹ thuật',tacDung:'Chủ về tài chính, kinh doanh, kỹ thuật',dacTinh:'Sao chủ về tài chính, thường liên quan đến tiền bạc, kinh doanh',noiDung:'Vũ Khúc là sao chủ về tài chính, kim loại. Khi đắc địa đem lại tài lộc dồi dào. Khi hãm địa có thể gặp khó khăn tài chính.'},
+  'Thiên Đồng':{category:'chinh-tinh',nguHanh:'thuy',yNghia:'Là sao Phúc tinh, chủ về phúc đức, may mắn, trẻ con',tinhChat:'Tốt, chủ phúc đức, may mắn',tacDung:'Chủ về phúc đức, may mắn, sự giúp đỡ',dacTinh:'Sao chủ về phúc đức, thường đem lại may mắn, sự giúp đỡ',noiDung:'Thiên Đồng là sao Phúc tinh, mang lại may mắn, phúc đức. Khi đắc địa đem lại nhiều may mắn. Khi hãm địa có thể gây lười biếng, ỷ lại.'},
+  'Liêm Trinh':{category:'chinh-tinh',nguHanh:'hoa',yNghia:'Là sao chủ về pháp luật, công lý, bệnh tật',tinhChat:'Trung tính, chủ công lý, bệnh tật',tacDung:'Chủ về pháp luật, công lý, có thể gây bệnh tật',dacTinh:'Sao chủ về công lý, thường liên quan đến pháp luật, bệnh tật',noiDung:'Liêm Trinh là sao chủ về pháp luật, công lý. Khi đắc địa đem lại sự công bằng, chính trực. Khi hãm địa có thể gây bệnh tật, tai nạn.'},
+  'Thái Âm':{category:'chinh-tinh',nguHanh:'kim',yNghia:'Là sao chủ về âm tính, nữ tính, tài sản, nghệ thuật',tinhChat:'Tốt, chủ tài sản, nghệ thuật',tacDung:'Chủ về tài sản, nghệ thuật, tính nữ',dacTinh:'Sao chủ về âm tính, thường đem lại tài sản, năng khiếu nghệ thuật',noiDung:'Thái Âm là sao chủ về âm tính, nữ tính. Khi đắc địa (ban đêm) đem lại nhiều tài sản. Khi hãm địa có thể gây buồn bã, u sầu.'},
+  'Tham Lang':{category:'chinh-tinh',nguHanh:'moc',yNghia:'Là sao chủ về ham muốn, hưởng thụ, đào hoa',tinhChat:'Trung tính, chủ ham muốn, đào hoa',tacDung:'Chủ về ham muốn, hưởng thụ, đào hoa',dacTinh:'Sao chủ về ham muốn, thường liên quan đến hưởng thụ, đào hoa',noiDung:'Tham Lang là sao chủ về ham muốn, hưởng thụ. Khi đắc địa đem lại tài năng nghệ thuật. Khi hãm địa có thể gây tham lam, hưởng thụ quá độ.'},
+  'Cự Môn':{category:'chinh-tinh',nguHanh:'thuy',yNghia:'Là sao chủ về khẩu thiệt, tranh cãi, che giấu',tinhChat:'Trung tính, chủ khẩu thiệt, che giấu',tacDung:'Chủ về khẩu thiệt, tranh cãi, bí mật',dacTinh:'Sao chủ về khẩu thiệt, thường liên quan đến tranh cãi, bí mật',noiDung:'Cự Môn là sao chủ về khẩu thiệt. Khi đắc địa đem lại tài hùng biện. Khi hãm địa có thể gây tranh cãi, bệnh tật về miệng.'},
+  'Thiên Tướng':{category:'chinh-tinh',nguHanh:'thuy',yNghia:'Là sao chủ về trợ giúp, che chở, quan chức',tinhChat:'Tốt, chủ trợ giúp, che chở',tacDung:'Chủ về sự trợ giúp, che chở, quan chức',dacTinh:'Sao chủ về sự trợ giúp, thường đem lại quý nhân, che chở',noiDung:'Thiên Tướng là sao chủ về trợ giúp, che chở. Khi đắc địa đem lại nhiều quý nhân. Khi hãm địa sự giúp đỡ không đến nơi đến chốn.'},
+  'Thiên Lương':{category:'chinh-tinh',nguHanh:'moc',yNghia:'Là sao chủ về y thuật, tôn giáo, từ thiện',tinhChat:'Tốt, chủ y thuật, từ thiện',tacDung:'Chủ về y thuật, tôn giáo, từ thiện',dacTinh:'Sao chủ về y thuật, thường đem lại tài năng chữa bệnh, lòng nhân từ',noiDung:'Thiên Lương là sao chủ về y thuật, tôn giáo. Khi đắc địa đem lại khả năng y thuật xuất sắc. Khi hãm địa có thể gây bệnh tật.'},
+  'Thất Sát':{category:'chinh-tinh',nguHanh:'kim',yNghia:'Là sao chủ về quyền lực, mạo hiểm, can đảm',tinhChat:'Trung tính, chủ quyền lực, mạo hiểm',tacDung:'Chủ về quyền lực, mạo hiểm, can đảm',dacTinh:'Sao chủ về quyền lực, thường liên quan đến mạo hiểm, can đảm',noiDung:'Thất Sát là sao chủ về quyền lực, mạo hiểm. Khi đắc địa đem lại thành công nhờ can đảm. Khi hãm địa có thể gây tai nạn, rủi ro.'},
+  'Phá Quân':{category:'chinh-tinh',nguHanh:'thuy',yNghia:'Là sao chủ về phá hoại, thay đổi, tiên phong',tinhChat:'Trung tính, chủ phá hoại, thay đổi',tacDung:'Chủ về phá hoại, thay đổi, tiên phong',dacTinh:'Sao chủ về sự phá hoại, thường liên quan đến thay đổi, cách mạng',noiDung:'Phá Quân là sao chủ về sự phá hoại, thay đổi. Khi đắc địa đem lại sự đổi mới, sáng tạo. Khi hãm địa có thể gây phá hoại, hủy diệt.'},
+  'Thiên Cơ':{category:'chinh-tinh',nguHanh:'moc',yNghia:'Là sao chủ về cơ trí, mưu mẹo, linh hoạt',tinhChat:'Trung tính, chủ cơ trí, mưu mẹo',tacDung:'Chủ về cơ trí, mưu mẹo, linh hoạt',dacTinh:'Sao chủ về cơ trí, thường liên quan đến mưu mẹo, linh hoạt',noiDung:'Thiên Cơ là sao chủ về cơ trí. Khi đắc địa đem lại mưu trí, sáng suốt. Khi hãm địa có thể gây mưu mẹo xấu.'},
+  'Lộc Tồn':{category:'phu-tinh-tot',nguHanh:'tho',yNghia:'Là sao chủ về tài lộc, thu nhập ổn định',tinhChat:'Tốt, chủ tài lộc ổn định',tacDung:'Mang lại tài lộc, thu nhập ổn định, của cải',noiDung:'Lộc Tồn là sao chủ về tài lộc ổn định, thu nhập đều đặn.'},
+  'Thiên Mã':{category:'phu-tinh-tot',nguHanh:'hoa',yNghia:'Là sao chủ về sự di chuyển, thay đổi, phát triển',tinhChat:'Tốt, chủ di chuyển, thay đổi',tacDung:'Thúc đẩy sự di chuyển, thay đổi, phát triển',noiDung:'Thiên Mã là sao chủ về sự di chuyển, thường đem lại cơ hội đi xa, công việc mới.'},
+  'Văn Xương':{category:'phu-tinh-tot',nguHanh:'kim',yNghia:'Là sao chủ về văn chương, học vấn, trí tuệ',tinhChat:'Tốt, chủ văn chương, học vấn',tacDung:'Mang lại tài năng văn chương, học vấn cao, trí tuệ',noiDung:'Văn Xương là sao chủ về văn chương, học vấn, thường đem lại thành công trong học vấn.'},
+  'Văn Khúc':{category:'phu-tinh-tot',nguHanh:'thuy',yNghia:'Là sao chủ về nghệ thuật, tài năng, sáng tạo',tinhChat:'Tốt, chủ nghệ thuật, sáng tạo',tacDung:'Mang lại tài năng nghệ thuật, sáng tạo, năng khiếu',noiDung:'Văn Khúc là sao chủ về nghệ thuật, sáng tạo, thường đem lại năng khiếu đặc biệt.'},
+  'Tả Phù':{category:'phu-tinh-tot',nguHanh:'tho',yNghia:'Là sao trợ giúp bên trái, quý nhân nam',tinhChat:'Tốt, chủ trợ giúp, quý nhân',tacDung:'Mang lại sự trợ giúp từ quý nhân nam',noiDung:'Tả Phù là sao trợ giúp, thường đem lại sự giúp đỡ từ quý nhân nam.'},
+  'Hữu Bật':{category:'phu-tinh-tot',nguHanh:'thuy',yNghia:'Là sao trợ giúp bên phải, quý nhân nữ',tinhChat:'Tốt, chủ trợ giúp, quý nhân',tacDung:'Mang lại sự trợ giúp từ quý nhân nữ',noiDung:'Hữu Bật là sao trợ giúp, thường đem lại sự giúp đỡ từ quý nhân nữ.'},
+  'Thiên Khôi':{category:'phu-tinh-tot',nguHanh:'hoa',yNghia:'Là sao chủ về quý nhân văn, học vấn, danh vọng',tinhChat:'Tốt, chủ quý nhân văn, danh vọng',tacDung:'Mang lại quý nhân văn, danh vọng, thành công học vấn',noiDung:'Thiên Khôi là sao chủ về quý nhân văn, thường đem lại sự giúp đỡ từ những người học vấn cao.'},
+  'Thiên Việt':{category:'phu-tinh-tot',nguHanh:'hoa',yNghia:'Là sao chủ về quý nhân võ, quyền lực, thăng tiến',tinhChat:'Tốt, chủ quý nhân võ, quyền lực',tacDung:'Mang lại quý nhân võ, quyền lực, thăng tiến nhanh',noiDung:'Thiên Việt là sao chủ về quý nhân võ, thường đem lại sự giúp đỡ từ người có quyền lực.'},
+  'Đào Hoa':{category:'phu-tinh-tot',nguHanh:'thuy',yNghia:'Là sao chủ về tình duyên, sắc đẹp, nghệ thuật',tinhChat:'Trung tính, chủ tình duyên, sắc đẹp',tacDung:'Mang lại vận đào hoa, sắc đẹp, tài năng nghệ thuật',noiDung:'Đào Hoa là sao chủ về tình duyên, sắc đẹp, thường đem lại vận đào hoa.'},
+  'Kình Dương':{category:'phu-tinh-xau',nguHanh:'kim',yNghia:'Là sát tinh, chủ về tranh đấu, tai nạn, tổn thương',tinhChat:'Xấu, chủ tranh đấu, tai nạn',tacDung:'Gây ra tranh đấu, tai nạn, tổn thương',noiDung:'Kình Dương là sát tinh, thường đem lại sự tranh đấu, mâu thuẫn, tai nạn.'},
+  'Đà La':{category:'phu-tinh-xau',nguHanh:'kim',yNghia:'Là sát tinh, chủ về trở ngại, chậm trễ, bệnh tật',tinhChat:'Xấu, chủ trở ngại, chậm trễ',tacDung:'Gây ra trở ngại, chậm trễ, bệnh tật kéo dài',noiDung:'Đà La là sát tinh, thường đem lại sự trở ngại, bệnh tật kéo dài khó chữa.'},
+  'Địa Kiếp':{category:'phu-tinh-xau',nguHanh:'hoa',yNghia:'Là sát tinh, chủ về hao tổn, mất mát, trộm cắp',tinhChat:'Xấu, chủ hao tổn, mất mát',tacDung:'Gây ra hao tổn tài sản, mất mát, trộm cắp',noiDung:'Địa Kiếp là sát tinh, thường đem lại sự hao tổn tài sản, mất mát.'},
+  'Địa Không':{category:'phu-tinh-xau',nguHanh:'hoa',yNghia:'Là sát tinh, chủ về hư vô, tan biến, không thực tế',tinhChat:'Xấu, chủ hư vô, tan biến',tacDung:'Gây ra sự hư vô, tan biến, không thực tế',noiDung:'Địa Không là sát tinh, thường đem lại sự hư vô, tan biến, kế hoạch thất bại.'},
+  'Hỏa Tinh':{category:'phu-tinh-xau',nguHanh:'hoa',yNghia:'Là sát tinh, chủ về hỏa hoạn, nóng nảy, bạo lực',tinhChat:'Xấu, chủ hỏa hoạn, nóng nảy',tacDung:'Gây ra hỏa hoạn, nóng nảy, bạo lực',noiDung:'Hỏa Tinh là sát tinh, thường đem lại nguy cơ hỏa hoạn, tính nóng nảy.'},
+  'Linh Tinh':{category:'phu-tinh-xau',nguHanh:'hoa',yNghia:'Là sát tinh, chủ về tai họa bất ngờ, bệnh tật hiểm nghèo',tinhChat:'Xấu, chủ tai họa bất ngờ',tacDung:'Gây ra tai họa bất ngờ, bệnh tật hiểm nghèo',noiDung:'Linh Tinh là sát tinh, thường đem lại tai họa bất ngờ, bệnh tật hiểm nghèo.'},
+  'Thiên Không':{category:'phu-tinh-xau',nguHanh:'hoa',yNghia:'Là sát tinh, chủ về hư vô, ảo tưởng, tan biến',tinhChat:'Xấu, chủ hư vô, ảo tưởng',tacDung:'Gây ra sự hư vô, ảo tưởng, tan biến',noiDung:'Thiên Không là sát tinh, thường đem lại sự hư vô, ảo tưởng, kế hoạch không thực tế.'},
+  'Tuần':{category:'trung-tinh',nguHanh:null,yNghia:'Là trung tinh, chủ về ngăn trở, cô lập, tách biệt',tinhChat:'Trung tính, chủ ngăn trở, cô lập',tacDung:'Gây ra sự ngăn trở, cô lập, tách biệt',noiDung:'Tuần là trung tinh, thường đem lại sự ngăn trở, cô lập khỏi các yếu tố bên ngoài.'},
+  'Triệt':{category:'trung-tinh',nguHanh:null,yNghia:'Là trung tinh, chủ về triệt tiêu, giảm bớt ảnh hưởng',tinhChat:'Trung tính, chủ triệt tiêu, giảm bớt',tacDung:'Triệt tiêu hoặc giảm bớt ảnh hưởng của các sao khác',noiDung:'Triệt là trung tinh, thường triệt tiêu hoặc giảm bớt ảnh hưởng của các sao trong cùng cung.'},
+  'Trường Sinh':{category:'truong-sinh',nguHanh:'thuy',yNghia:'Khởi đầu của vòng Trường Sinh, chủ về sinh khí, bắt đầu',tinhChat:'Tốt, chủ sinh khí, bắt đầu',tacDung:'Mang lại sinh khí, sự bắt đầu thuận lợi',noiDung:'Trường Sinh là khởi đầu vòng 12 sao, tượng trưng cho sự sinh sôi, bắt đầu đầy sinh khí.'},
+  'Mộc Dục':{category:'truong-sinh',nguHanh:'moc',yNghia:'Giai đoạn phát triển, chủ về học hỏi, trưởng thành',tinhChat:'Tốt, chủ phát triển, học hỏi',tacDung:'Thúc đẩy sự phát triển, học hỏi, trưởng thành',noiDung:'Mộc Dục tượng trưng cho giai đoạn phát triển, học hỏi, tích lũy kinh nghiệm.'},
+  'Quan Đới':{category:'truong-sinh',nguHanh:'kim',yNghia:'Giai đoạn thành tựu, chủ về danh vọng, địa vị',tinhChat:'Tốt, chủ thành tựu, danh vọng',tacDung:'Mang lại thành tựu, danh vọng, địa vị',noiDung:'Quan Đới tượng trưng cho giai đoạn đạt được thành tựu, danh vọng, địa vị.'},
+  'Lâm Quan':{category:'truong-sinh',nguHanh:'hoa',yNghia:'Giai đoạn thịnh vượng, chủ về quyền lực, ảnh hưởng',tinhChat:'Tốt, chủ thịnh vượng, quyền lực',tacDung:'Mang lại sự thịnh vượng, quyền lực, ảnh hưởng',noiDung:'Lâm Quan tượng trưng cho giai đoạn thịnh vượng, có quyền lực và ảnh hưởng lớn.'},
+  'Đế Vượng':{category:'truong-sinh',nguHanh:'tho',yNghia:'Đỉnh cao của vòng Trường Sinh, chủ về cực thịnh',tinhChat:'Tốt, chủ cực thịnh, đỉnh cao',tacDung:'Mang lại sự cực thịnh, đạt đến đỉnh cao',noiDung:'Đế Vượng là đỉnh cao của vòng Trường Sinh, tượng trưng cho sự cực thịnh, thành công rực rỡ.'},
+  'Suy':{category:'truong-sinh',nguHanh:'tho',yNghia:'Giai đoạn suy yếu, chủ về giảm sút, thoái trào',tinhChat:'Xấu, chủ suy yếu, giảm sút',tacDung:'Gây ra sự suy yếu, giảm sút, thoái trào',noiDung:'Suy tượng trưng cho giai đoạn bắt đầu suy yếu sau thời kỳ cực thịnh.'},
+  'Bệnh':{category:'truong-sinh',nguHanh:'hoa',yNghia:'Giai đoạn bệnh tật, chủ về khó khăn, trở ngại',tinhChat:'Xấu, chủ bệnh tật, khó khăn',tacDung:'Gây ra bệnh tật, khó khăn, trở ngại',noiDung:'Bệnh tượng trưng cho giai đoạn gặp nhiều bệnh tật, khó khăn, trở ngại.'},
+  'Tử':{category:'truong-sinh',nguHanh:'kim',yNghia:'Giai đoạn chết, chủ về kết thúc, biến mất',tinhChat:'Xấu, chủ kết thúc, biến mất',tacDung:'Gây ra sự kết thúc, biến mất, mất mát',noiDung:'Tử tượng trưng cho giai đoạn kết thúc, biến mất, mất mát lớn.'},
+  'Mộ':{category:'truong-sinh',nguHanh:'thuy',yNghia:'Giai đoạn yên nghỉ, chủ về tích lũy ngầm, tiềm ẩn',tinhChat:'Trung tính, chủ yên nghỉ, tích lũy',tacDung:'Tạo sự yên nghỉ, tích lũy ngầm, tiềm ẩn',noiDung:'Mộ tượng trưng cho giai đoạn yên nghỉ, tích lũy ngầm, chuẩn bị tái sinh.'},
+  'Tuyệt':{category:'truong-sinh',nguHanh:'kim',yNghia:'Giai đoạn tuyệt diệt, chủ về cắt đứt, chia lìa',tinhChat:'Xấu, chủ tuyệt diệt, cắt đứt',tacDung:'Gây ra sự tuyệt diệt, cắt đứt, chia lìa',noiDung:'Tuyệt tượng trưng cho giai đoạn tuyệt diệt, cắt đứt mọi liên hệ.'},
+  'Thai':{category:'truong-sinh',nguHanh:'hoa',yNghia:'Giai đoạn thai nghén, chủ về manh nha, chuẩn bị',tinhChat:'Tốt, chủ thai nghén, manh nha',tacDung:'Tạo sự thai nghén, manh nha, chuẩn bị mới',noiDung:'Thai tượng trưng cho giai đoạn thai nghén, manh nha của sự sống mới.'},
+  'Dưỡng':{category:'truong-sinh',nguHanh:'moc',yNghia:'Giai đoạn dưỡng nuôi, chủ về phục hồi, chăm sóc',tinhChat:'Tốt, chủ dưỡng nuôi, phục hồi',tacDung:'Giúp dưỡng nuôi, phục hồi, chăm sóc',noiDung:'Dưỡng tượng trưng cho giai đoạn dưỡng nuôi, phục hồi sức khỏe, chăm sóc bản thân.'}
+};
+(function(){
+  const defaults=['Thiên Sứ','Thái Tuế','Quan Phủ','Lưu Hà','Tiểu Hao','Đại Hao','Phi Liêm','Thiên Riêu','Thiên Thương','Trực Phù','Phục Binh','Thiên Khốc','Thiên Hư','Kiếp Sát','Phá Toái','Cô Thần','Quả Tú','Thiên Hình','Bệnh Phù','Tang Môn','Bạch Hổ','Điếu Khách','Tuế Phá','Tử Phù','Thiên La','Địa Võng','Hóa Kỵ','Hóa Lộc','Hóa Quyền','Hóa Khoa','Lực Sĩ','Thanh Long','Tướng Quân','Tấu Thư','Hỷ Thần','Thiên Khôi','Thiên Việt','Long Trì','Phượng Các','Thiên Đức','Nguyệt Đức','Hồng Loan','Thiên Hỷ','Tam Thai','Bát Tọa','Thiên Y','Thiên Giải','Địa Giải','Thai Phụ','Phong Cáo','Quốc Ấn','Đường Phù','Bác Sĩ','Thiên Phúc','Thiên Tài','Thiên Thọ','Hoa Cái','Thiên Quan','Thiên Trù','Lưu Niên Văn Tinh','Đẩu Quân','Ân Quang','Thiên Quý','Giải Thần','Long Đức','Thiếu Dương','Thiếu Âm','Thiên Riêu'];
+  defaults.forEach(s=>{
+    if(STAR_DESCRIPTIONS[s])return;
+    let cat=SAO_XAU.has(s)?'phu-tinh-xau':TUAN_TRIET.has(s)?'trung-tinh':TRUONG_SINH_VONG.has(s)?'truong-sinh':s.includes('Hóa')?'hoa-tinh':'phu-tinh-tot';
+    let nh=null;
+    for(const[h,set]of Object.entries(NGU_HANH_SAO)){if(set.has(s)){nh=h;break;}}
+    if(TRUONG_SINH_NGU_HANH[s])nh=TRUONG_SINH_NGU_HANH[s];
+    const catLabel={'chinh-tinh':'chính tinh','phu-tinh-tot':'phụ tinh tốt','phu-tinh-xau':'phụ tinh xấu','truong-sinh':'sao thuộc vòng Trường Sinh'}[cat]||'trung tinh';
+    STAR_DESCRIPTIONS[s]={category:cat,nguHanh:nh,yNghia:`Là ${catLabel}`,tinhChat:cat.includes('xau')?'Xấu':cat.includes('tot')?'Tốt':'Trung tính',tacDung:'Ảnh hưởng đến vận mệnh theo đặc tính của sao',noiDung:`${s} là một trong những sao trong hệ thống tử vi, có ảnh hưởng nhất định đến vận mệnh. Chi tiết cần xem xét trong tổng thể lá số.`};
+  });
+})();
+const Utils={
+  _cache:{},
+  getElement(id){return this._cache[id]||(this._cache[id]=document.getElementById(id))},
+  filterSaoByType(arr,set){return arr.filter(s=>set.has(s))},
+  debounce(fn,w){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),w)}}
+};
+class TabManager{
+  constructor(app){this.app=app;this.tabs=new Map();this.cur=null;this.cnt=1;this.init()}
+  init(){this.setupEvents();this.addTab('Lá số 1',true)}
+  
+  addTab(name=null,setActive=true){
+    const id='tab_'+Date.now()+'_'+this.cnt++;
+    const nm=name||`Lá số ${this.tabs.size+1}`;
+    const tab={id,name:nm,type:'empty',data:null,formData:{day:'',month:'',year:'',hour:'14',gender:'nam',fullName:'',note:'',solarDate:'1990-06-07',lunarDisplay:'15/4/1990 (Canh Ngọ)',gioDisplay:'Mùi',namXem:'',namXemDisplay:''}};
+    this.tabs.set(id,tab);
+    this._createEls(tab);
+    if(setActive)this.switchTab(id);
+    this._updateViewMenu();
+    return id;
+  }
+  
+  _createEls(tab){
+    const hdr=document.createElement('div');
+    hdr.className='tab-item';hdr.id=`tab-header-${tab.id}`;hdr.dataset.tabId=tab.id;
+    hdr.innerHTML=`<span>${tab.name}</span><button type="button" class="tab-close" data-tab-id="${tab.id}">×</button>`;
+    Utils.getElement('tabsList').appendChild(hdr);
+    const pane=document.createElement('div');
+    pane.className='tab-pane';pane.id=`tab-content-${tab.id}`;
+    pane.innerHTML=this._getContentHTML(tab);
+    Utils.getElement('tabsContent').appendChild(pane);
+    this._attachEvents(tab);
+  }
+  
+  _getContentHTML(tab){
+    const f=tab.formData;
+    return`<div class="container">
+  <div class="form-section" id="form-${tab.id}">
+    <div class="error" id="error-${tab.id}" style="display:none;color:#e74c3c;padding:10px;background:#ffeaea;border-radius:5px;margin-bottom:10px"></div>
+    <div class="form-row">
+      <div><label>Họ Tên (tùy chọn)</label><input type="text" id="fullName-${tab.id}" placeholder="Ví dụ: Nguyễn Văn A" value="${f.fullName}"></div>
+      <div><label>Ghi chú</label><input type="text" id="note-${tab.id}" placeholder="Ghi chú thêm (tùy chọn)" value="${f.note}"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Ngày sinh (Dương lịch) *</label><input type="date" id="solarDate-${tab.id}" min="1900-01-01" max="2100-12-31" value="${f.solarDate||''}" oninput="window.tuviApp.onSolarDateChange('${tab.id}')"></div>
+      <div style="display:flex;flex-direction:column;justify-content:center">
+        <label>Âm lịch (tự động)</label>
+        <div id="lunarDisplay-${tab.id}" class="lunar-display-box">
+          ${f.lunarDisplay||'Chọn ngày Dương lịch →'}
+        </div>
+      </div>
+    </div>
+    <div style="display:none">
+      <input type="number" id="day-${tab.id}" value="${f.day||''}">
+      <input type="number" id="month-${tab.id}" value="${f.month||''}">
+      <input type="number" id="year-${tab.id}" value="${f.year||''}">
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Giờ sinh *
+          <span style="font-weight:normal;color:#888;font-size:11px" title="Tý:23-1 | Sửu:1-3 | Dần:3-5 | Mão:5-7 | Thìn:7-9 | Tị:9-11 | Ngọ:11-13 | Mùi:13-15 | Thân:15-17 | Dậu:17-19 | Tuất:19-21 | Hợi:21-23">(? xem giờ địa chi)</span>
+        </label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="number" id="hour-${tab.id}" min="0" max="23" placeholder="0-23" value="${f.hour}" style="flex:1" oninput="window.tuviApp.onHourChange('${tab.id}')">
+          <div id="gioDisplay-${tab.id}" class="gio-display-box">
+            ${f.gioDisplay||'—'}
+          </div>
+        </div>
+        ${f.hour==23?'<div style="font-size:11px;color:#e67e22;margin-top:3px">⚠️ 23h = giờ Tý, tính cho ngày hôm sau trong tử vi</div>':''}
+      </div>
+      <div><label>Giới tính *</label><select id="gender-${tab.id}"><option value="nam"${f.gender==='nam'?' selected':''}>Nam</option><option value="nu"${f.gender==='nu'?' selected':''}>Nữ</option></select></div>
+      <div>
+        <label>Năm xem
+          <span style="font-weight:normal;color:#888;font-size:11px">(để trống = năm hiện tại)</span>
+        </label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="number" id="namXem-${tab.id}" min="1900" max="2100" placeholder="${new Date().getFullYear()}" value="${f.namXem||''}" style="flex:1" oninput="window.tuviApp.onNamXemChange('${tab.id}')">
+          <div id="namXemDisplay-${tab.id}" class="namxem-display-box">
+            ${f.namXemDisplay||''}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn" id="btn-lap-laso-${tab.id}" type="button">⭐ Lập Lá Số</button>
+      <button class="btn btn-secondary" id="btn-reset-${tab.id}" type="button">🔄 Làm lại</button>
+    </div>
+  </div>
+  <div id="result-${tab.id}" style="display:none"></div>
+</div>`;
+  }
+  
+  _attachEvents(tab){
+    Utils.getElement(`btn-lap-laso-${tab.id}`)?.addEventListener('click',()=>this.app.lapLaSo(tab.id));
+    Utils.getElement(`btn-reset-${tab.id}`)?.addEventListener('click',()=>this.app.resetForm(tab.id));
+  }
+  
+  switchTab(id){
+    document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+    Utils.getElement(`tab-header-${id}`)?.classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    Utils.getElement(`tab-content-${id}`)?.classList.add('active');
+    this.cur=id;
+    this._saveFormData();
+    this.app.saveAutoSave?.();
+  }
+  
+  getCurrent(){return this.tabs.get(this.cur)}
+  
+  updateTab(id,upd){
+    const t=this.tabs.get(id);
+    if(!t)return;
+    Object.assign(t,upd);
+    if(upd.name){const hdr=Utils.getElement(`tab-header-${id}`);if(hdr){const sp=hdr.querySelector('span');if(sp)sp.textContent=upd.name;}}
+  }
+  
+  _saveFormData(){
+    const t=this.getCurrent();if(!t)return;
+    const fd={};
+    ['day','month','year','hour','gender','fullName','note','solarDate','lunarDisplay','gioDisplay','namXem','namXemDisplay'].forEach(f=>{
+      if(f==='lunarDisplay'){
+        const el=document.getElementById(`lunarDisplay-${t.id}`);
+        fd[f]=el?.textContent||'';
+      } else if(f==='gioDisplay'){
+        const el=document.getElementById(`gioDisplay-${t.id}`);
+        fd[f]=el?.textContent||'';
+      } else if(f==='namXemDisplay'){
+        const el=document.getElementById(`namXemDisplay-${t.id}`);
+        fd[f]=el?.textContent||'';
+      } else {
+        const el=Utils.getElement(`${f}-${t.id}`);
+        fd[f]=el?.value||(f==='gender'?'nam':'');
+      }
+    });
+    t.formData=fd;
+  }
+  
+  closeTab(id){
+    if(this.tabs.size<=1){this.app.showNotification('⚠️ Không thể đóng tab cuối cùng!');return;}
+    if(!this.tabs.has(id))return;
+    Utils.getElement(`tab-header-${id}`)?.remove();
+    Utils.getElement(`tab-content-${id}`)?.remove();
+    this.tabs.delete(id);
+    if(id===this.cur){
+      const keys=Array.from(this.tabs.keys());
+      this.switchTab(keys[Math.max(0,keys.length-1)]);
+    }
+    this._updateViewMenu();
+  }
+  
+  _updateViewMenu(){
+    const vm=Utils.getElement('viewMenu');
+    vm.querySelectorAll('.dropdown-item').forEach(i=>i.remove());
+    this.tabs.forEach(t=>{
+      const a=document.createElement('a');
+      a.className='dropdown-item';a.href='#';a.textContent=t.name;
+      a.onclick=e=>{e.preventDefault();this.switchTab(t.id);this.app.closeAllDropdowns()};
+      vm.appendChild(a);
+    });
+  }
+  
+  setupEvents(){
+    Utils.getElement('tabsList').addEventListener('click',e=>{
+      const ti=e.target.closest('.tab-item');
+      if(!ti)return;
+      const id=ti.dataset.tabId;
+      if(!id)return;
+      e.target.classList.contains('tab-close')?this.closeTab(id):this.switchTab(id);
+    });
+    Utils.getElement('addTabBtn')?.addEventListener('click',()=>this.addTab());
+  }
+}
+const LOC_TON_MAP=[2,3,5,6,5,6,8,9,11,0];
+const TRUONG_SINH_START={2:8, 3:11, 4:5, 5:8, 6:2};
+const TU_VI_DATA={
+  2:{0:[1,24,25],1:[22,23],2:[20,21],3:[2,3,26,27],4:[6,7,30],5:[8,9],6:[10,11],7:[12,13],8:[14,15],9:[16,17],10:[18,19],11:[4,5,28,29]},
+  3:{0:[4,12,14],1:[1,9,11],2:[6,8],3:[3,5],4:[7,15,17],5:[10,18,20],6:[13,21,23],7:[16,24,26],8:[19,27,29],9:[2,28],10:[25],11:[22,30]},
+  4:{0:[3,9],1:[5],2:[1,30],3:[4,7,13],4:[2,12,15,21],5:[6,16,19,25],6:[10,20,23,29],7:[14,24,27],8:[18,28],9:[22],10:[26],11:[8,11,17]},
+  5:{5:[8,20,24],6:[1,13,25,29],7:[6,18,30],8:[11,23],4:[3,15,19,27],9:[16,28],3:[10,14,22],10:[21],2:[5,9,17],1:[4,12],0:[7],11:[2,26]},
+  6:{0:[5,15,25],1:[9,19],2:[3,13],3:[6,11,21],4:[4,18,23],5:[10,24,29],6:[2,16,30],7:[8,22],8:[14,28],9:[1,20],10:[7,26],11:[12,17,27]}
+};
+const BANG_CUC=[[2,6,5,3,4],[2,6,5,3,4],[6,5,3,4,2],[6,5,3,4,2],[3,4,2,6,5],[3,4,2,6,5],[5,3,4,2,6],[5,3,4,2,6],[4,2,6,5,3],[4,2,6,5,3],[6,5,3,4,2],[6,5,3,4,2]];
+const TU_HOA_MAP={0:{loc:'Liêm Trinh',quyen:'Phá Quân',khoa:'Vũ Khúc',ky:'Thái Dương'},1:{loc:'Thiên Cơ',quyen:'Thiên Lương',khoa:'Tử Vi',ky:'Thái Âm'},2:{loc:'Thiên Đồng',quyen:'Thiên Cơ',khoa:'Văn Xương',ky:'Liêm Trinh'},3:{loc:'Thái Âm',quyen:'Thiên Đồng',khoa:'Thiên Cơ',ky:'Cự Môn'},4:{loc:'Tham Lang',quyen:'Thái Âm',khoa:'Hữu Bật',ky:'Thiên Cơ'},5:{loc:'Vũ Khúc',quyen:'Tham Lang',khoa:'Thiên Lương',ky:'Văn Khúc'},6:{loc:'Thái Dương',quyen:'Vũ Khúc',khoa:'Thái Âm',ky:'Thiên Đồng'},7:{loc:'Cự Môn',quyen:'Thiên Lương',khoa:'Văn Khúc',ky:'Văn Xương'},8:{loc:'Thiên Lương',quyen:'Tử Vi',khoa:'Tả Phù',ky:'Vũ Khúc'},9:{loc:'Phá Quân',quyen:'Cự Môn',khoa:'Thái Âm',ky:'Tham Lang'}};
+const SAO_CHI_NAM=['Thái Tuế','Thiếu Dương','Tang Môn','Thiếu Âm','Quan Phù','Tử Phù','Tuế Phá','Long Đức','Bạch Hổ','Phúc Đức','Điếu Khách','Trực Phù'];
+class TuViContext{
+  constructor(ngay,thang,nam,gio,gender,nhuan=false){
+    this.ngay=ngay;this.nam=nam;this.gio=gio;this.gender=gender;
+    this.thang=nhuan?thang+1:thang;
+    this.thangGoc=thang;
+    this.nhuan=nhuan;
+    this._calc();
+  }
+  _calc(){
+    this.chiGio=Math.floor(((this.gio+1)%24)/2)%12;
+    this.canIndex=((this.nam-4)%10+10)%10;
+    this.chiIndex=((this.nam-4)%12+12)%12;
+    this.can=THIEN_CAN[this.canIndex];
+    this.chi=DIA_CHI[this.chiIndex];
+    this.isDuongNamAmNu=(this.canIndex%2===0&&this.gender==='nam')||(this.canIndex%2===1&&this.gender==='nu');
+    this.menhCungIndex=((2+this.thang-1)-this.chiGio+12)%12;
+    this.thanCungIndex=((2+this.thang-1)+this.chiGio)%12;
+    const ca=BANG_CUC[this.menhCungIndex]||[2,6,5,3,4];
+    this.cucSo=ca[this.canIndex%5];
+    this.cucTen={2:'Thủy Nhị Cục',3:'Mộc Tam Cục',4:'Kim Tứ Cục',5:'Thổ Ngũ Cục',6:'Hỏa Lục Cục'}[this.cucSo];
+    this.tuViIndex=this._findTuVi();
+    this.locTonIndex=LOC_TON_MAP[this.canIndex];
+    this.taPhuIdx=(4+this.thang-1)%12;
+    this.huuBatIdx=(10-(this.thang-1)+12)%12;
+    this.vanXuongIdx=(10-this.chiGio+12)%12;
+    this.vanKhucIdx=(4+this.chiGio)%12;
+    this.truongSinhStart=TRUONG_SINH_START[this.cucSo]||8;
+    const chi=this.chiIndex;
+    const dH={5:6,9:6,1:6,11:0,3:0,7:0,8:9,0:9,4:9,2:3,6:3,10:3};
+    const tM={5:11,9:11,1:11,11:0,3:0,7:0,8:2,0:2,4:2,2:8,6:8,10:8};
+    const hT={2:1,6:1,10:1,5:3,9:3,1:3,11:2,3:2,7:2,8:2,0:2,4:2};
+    const lT={2:3,6:3,10:3,5:10,9:10,1:10,11:10,3:10,7:10,8:10,0:10,4:10};
+    const kS={5:2,9:2,1:2,11:8,3:8,7:8,8:5,0:5,4:5,2:11,6:11,10:11};
+    const cT={11:2,0:2,1:2,2:5,3:5,4:5,5:8,6:8,7:8,8:11,9:11,10:11};
+    const qT={11:10,0:10,1:10,2:1,3:1,4:1,5:4,6:4,7:4,8:7,9:7,10:7};
+    const hC={5:1,9:1,1:1,11:7,3:7,7:7,2:10,6:10,10:10,8:4,0:4,4:4};
+    const pT={0:5,6:5,3:5,9:5,2:9,8:9,5:9,11:9,1:1,4:1,7:1,10:1};
+    this.daoHoaIdx=dH[chi];this.thienMaIdx=tM[chi];
+    this.hoaTinhStart=hT[chi];this.linhTinhStart=lT[chi];
+    this.kiepSatIdx=kS[chi];this.coThanIdx=cT[chi];
+    this.quaTuIdx=qT[chi];this.hoaCaiIdx=hC[chi];this.phaToaiIdx=pT[chi];
+    this.menhCung=DIA_CHI[this.menhCungIndex];
+    this.thanCung=DIA_CHI[this.thanCungIndex];
+    this.canChi=`${this.can} ${this.chi}`;
+  }
+  _findTuVi(){
+    const data=TU_VI_DATA[this.cucSo];if(!data)return null;
+    for(let c=0;c<12;c++){if(data[c]?.includes(this.ngay))return c;}
+    return null;
+  }
+  getHoaTinh(){return this.isDuongNamAmNu?(this.hoaTinhStart+this.chiGio)%12:(this.hoaTinhStart-this.chiGio+12)%12}
+  getLinhTinh(){return this.isDuongNamAmNu?(this.linhTinhStart-this.chiGio+12)%12:(this.linhTinhStart+this.chiGio)%12}
+  getCanThang(){return((this.canIndex%5)*2+2+(this.thang-1))%10}
+  getChiThang(){return(this.thang+1)%12}
+  getCanChiThang(){return THIEN_CAN[this.getCanThang()]+' '+DIA_CHI[this.getChiThang()]}
+}
+class AnSaoSystem{
+  constructor(ctx){this.ctx=ctx;this.saoByCung=Array.from({length:12},()=>[]);this.saoToCung=new Map();this._nhCache=new Map()}
+  
+  an(sao,idx){
+    if(idx<0||idx>11||idx===undefined)return;
+    const cs=this.saoByCung[idx];
+    if(!cs.includes(sao)){
+      cs.push(sao);
+      if(!this.saoToCung.has(sao))this.saoToCung.set(sao,[]);
+      this.saoToCung.get(sao).push(idx);
+    }
+  }
+  
+  getNhClass(sao){
+    if(this._nhCache.has(sao))return this._nhCache.get(sao);
+    let r=TRUONG_SINH_NGU_HANH[sao]?`mau-${TRUONG_SINH_NGU_HANH[sao]}`:'';
+    if(!r)for(const[h,s]of Object.entries(NGU_HANH_SAO)){if(s.has(sao)){r=`mau-${h}`;break;}}
+    this._nhCache.set(sao,r);return r;
+  }
+  
+  anChinhTinh(){
+    if(this.ctx.tuViIndex===null)return;
+    const tv=this.ctx.tuViIndex;
+    [['Tử Vi',0],['Liêm Trinh',4],['Thiên Đồng',7],['Vũ Khúc',8],['Thái Dương',9],['Thiên Cơ',11]]
+      .forEach(([s,o])=>this.an(s,(tv+o)%12));
+    const tp=(12-tv+4)%12;
+    [['Thiên Phủ',0],['Thái Âm',1],['Tham Lang',2],['Cự Môn',3],['Thiên Tướng',4],['Thiên Lương',5],['Thất Sát',6],['Phá Quân',10]]
+      .forEach(([s,o])=>this.an(s,(tp+o)%12));
+  }
+  
+  anSaoCanChi(){
+    const c=this.ctx;
+    SAO_CHI_NAM.forEach((s,i)=>this.an(s,(c.chiIndex+i)%12));
+    this.an('Lộc Tồn', c.locTonIndex);
+    this.an('Bác Sĩ',  c.locTonIndex);
+    const vuongLT=['Lực Sĩ','Thanh Long','Tiểu Hao','Tướng Quân','Tấu Thư','Phi Liêm','Hỷ Thần','Đại Hao','Phục Binh','Quan Phủ','Lưu Hà'];
+    const stepLT = c.isDuongNamAmNu ? 1 : -1;
+    vuongLT.forEach((s,i)=>this.an(s,(c.locTonIndex + stepLT*(i+1) + 120)%12));
+    this.an('Long Trì',(4+c.chiIndex)%12);
+    this.an('Phượng Các',(10-c.chiIndex+12)%12);
+    this.an('Thiên Đức',(9+c.chiIndex)%12);
+    this.an('Nguyệt Đức',(5+c.chiIndex)%12);
+    const hl=(3-c.chiIndex+12)%12;
+    this.an('Hồng Loan',hl);this.an('Thiên Hỷ',(hl+6)%12);
+  }
+  
+  anSaoCoDinhVaGio(){
+    const c=this.ctx;
+    this.an('Kình Dương',(c.locTonIndex+1)%12);
+    this.an('Đà La',(c.locTonIndex-1+12)%12);
+    this.an('Địa Kiếp',(11+c.chiGio)%12);
+    this.an('Địa Không',(11-c.chiGio+12)%12);
+    this.an('Tả Phù',c.taPhuIdx);this.an('Hữu Bật',c.huuBatIdx);
+    this.an('Văn Xương',c.vanXuongIdx);this.an('Văn Khúc',c.vanKhucIdx);
+    this.an('Hỏa Tinh',c.getHoaTinh());this.an('Linh Tinh',c.getLinhTinh());
+    this.an('Tam Thai',(c.taPhuIdx+c.ngay-1)%12);
+    this.an('Bát Tọa',(c.huuBatIdx-(c.ngay-1)+12)%12);
+    this.an('Thiên Hình',(9+c.thang-1)%12);
+    this.an('Thiên Riêu',(1+c.thang-1)%12);
+    this.an('Thiên Y',(1+c.thang-1)%12);
+    this.an('Thiên Giải',(8+c.thang-1)%12);
+    this.an('Địa Giải',(7+c.thang-1)%12);
+    this.an('Thai Phụ',(c.vanKhucIdx+2)%12);
+    this.an('Phong Cáo',(c.vanKhucIdx-2+12)%12);
+    this.an('Quốc Ấn',(c.locTonIndex+8)%12);
+    this.an('Đường Phù',(c.locTonIndex-7+12)%12);
+  }
+  
+  anSaoDacBiet(){
+    const c=this.ctx;
+    this.an('Đào Hoa',c.daoHoaIdx);this.an('Thiên Mã',c.thienMaIdx);
+    this.an('Cô Thần',c.coThanIdx);this.an('Quả Tú',c.quaTuIdx);
+    this.an('Kiếp Sát',c.kiepSatIdx);this.an('Phá Toái',c.phaToaiIdx);
+    this.an('Hoa Cái',c.hoaCaiIdx);
+    const tqM=[7,4,5,2,3,9,11,9,10,6],tpM=[9,8,0,11,3,2,6,5,6,5];
+    this.an('Thiên Quan',tqM[c.canIndex]);this.an('Thiên Phúc',tpM[c.canIndex]);
+    const tkM=[1,0,0,11,11,7,7,3,1,3],tvM=[7,8,8,9,9,5,5,2,7,2];
+    this.an('Thiên Khôi',tkM[c.canIndex]);this.an('Thiên Việt',tvM[c.canIndex]);
+    this.an('Thiên La',4);this.an('Địa Võng',10);
+    this.an('Thiên Tài',(c.menhCungIndex+c.chiIndex)%12);
+    this.an('Thiên Thọ',(c.thanCungIndex+c.chiIndex)%12);
+    this.an('Thiên Thương',(c.menhCungIndex+5)%12);
+    this.an('Thiên Sứ',(c.menhCungIndex+7)%12);
+  }
+  
+  anTruongSinh(){
+    const ts=['Trường Sinh','Mộc Dục','Quan Đới','Lâm Quan','Đế Vượng','Suy','Bệnh','Tử','Mộ','Tuyệt','Thai','Dưỡng'];
+    ts.forEach((s,i)=>{
+      const idx=this.ctx.isDuongNamAmNu?(this.ctx.truongSinhStart+i)%12:(this.ctx.truongSinhStart-i+12)%12;
+      this.an(s,idx);
+    });
+  }
+  
+  anSaoPhu(){
+    const c=this.ctx;
+    const lhM={0:9,1:10,2:7,3:4,4:5,5:6,6:8,7:3,8:11,9:2};
+    const lhI=lhM[c.canIndex];if(lhI!==undefined)this.an('Lưu Hà',lhI);
+    const ttM={0:0,1:6,2:0,3:0,4:6,5:8,6:2,7:6,8:9,9:10};
+    const ttI=ttM[c.canIndex];if(ttI!==undefined)this.an('Thiên Trù',ttI);
+    const lnM={0:0,1:6,2:8,3:9,4:8,5:9,6:11,7:0,8:2,9:3};
+    const lnI=lnM[c.canIndex];if(lnI!==undefined)this.an('Lưu Niên Văn Tinh',lnI);
+    const dqI=((c.chiIndex-(c.thang-1)+12)%12+c.chiGio)%12;
+    this.an('Đẩu Quân',dqI);
+    this.an('Thiên Không',(c.chiIndex+1)%12);
+    this.an('Ân Quang',(10-c.chiGio+c.ngay-2+24)%12);
+    this.an('Thiên Quý',(4+c.chiGio-(c.ngay-1)+1+24)%12);
+    this.an('Giải Thần',(10-c.chiIndex+12)%12);
+  }
+  
+  anTuanTriet(){
+    const c=this.ctx;
+    const cg=(c.chiIndex-c.canIndex+12)%12;
+    const tM={0:[10,11],10:[8,9],8:[6,7],6:[4,5],4:[2,3]};
+    (tM[cg]||[0,1]).forEach(i=>this.an('Tuần',i));
+    const nv=c.canIndex%5;
+    const trM={0:[8,9],1:[7,6],2:[4,5],3:[2,4],4:[0,1]};
+    (trM[nv]||[0,1]).forEach(i=>this.an('Triệt',i));
+  }
+  
+  anTuHoa(){
+    const th=TU_HOA_MAP[this.ctx.canIndex];if(!th)return;
+    const hM={loc:'Hóa Lộc',quyen:'Hóa Quyền',khoa:'Hóa Khoa',ky:'Hóa Kỵ'};
+    for(const[l,sg]of Object.entries(th)){
+      const cs=this.saoToCung.get(sg);
+      if(cs?.length)cs.forEach(c=>this.an(hM[l]||`Hóa ${l}`,c));
+    }
+  }
+  
+  anTatCa(){
+    ['anChinhTinh','anSaoCanChi','anSaoCoDinhVaGio','anSaoDacBiet','anTruongSinh','anSaoPhu','anTuanTriet','anTuHoa']
+      .forEach(m=>this[m]());
+    return this.saoByCung;
+  }
+  
+  getTong(){return this.saoByCung.reduce((s,c)=>s+c.length,0)}
+}
+// Safe localStorage wrapper - tránh crash khi file:// hoặc private mode
+const SafeStorage={
+  get(k){try{return localStorage.getItem(k)}catch{return null}},
+  set(k,v){try{localStorage.setItem(k,v);return true}catch{return false}},
+  remove(k){try{localStorage.removeItem(k)}catch{}},
+  clear(){try{localStorage.clear()}catch{}}
+};
+
+class TuViApp{
+  constructor(){
+    this.savedKey='tuvi_saved_charts_v4';
+    this.fileKey='tuvi_files_v4';
+    this.autoKey='tuvi_autosave_v5';
+    this.el={};
+    this.init();
+  }
+  
+  init(){
+    try{this._cacheEls();}catch(e){console.error('cacheEls:',e);}
+    try{this.tm=new TabManager(this);}catch(e){console.error('TabManager:',e);}
+    try{this._setupEvents();}catch(e){console.error('setupEvents:',e);}
+    try{this._setupNavMobile();}catch(e){console.error('setupNavMobile:',e);}
+    try{this._setupKeys();}catch(e){console.error('setupKeys:',e);}
+    try{this._setupStarClicks();}catch(e){console.error('setupStarClicks:',e);}
+    try{this.loadAutoSave();}catch(e){console.error('loadAutoSave:',e);}
+    setTimeout(()=>{
+      try{
+        if(!SafeStorage.get('tuvi_welcomed_v5')){
+          this.showNotification('🎉 Chào mừng đến với Tử Vi Đẩu Số! Nhấp vào tên sao để xem chi tiết.',5000);
+          SafeStorage.set('tuvi_welcomed_v5','true');
+        } else if(!this.getApiKey()){
+          this.showNotification('💡 Vào Cài đặt → nhập API key để dùng phân tích AI chi tiết.',5000);
+        }
+      }catch(e){}
+    },1500);
+  }
+  
+  _cacheEls(){
+    ['loadingOverlay','loadingText','notification','savedChartsModal','fileManagerModal',
+     'fileOpenInput','fileImportInput','savedModalClose','fileModalClose','addTabBtn',
+     'tabsList','tabsContent','viewMenu','starDetailModal','starModalTitle','starModalBody',
+     'starModalClose','starDictionaryModal','dictionaryModalClose','starSearchInput',
+     'starDictionaryContent','savedChartsList','fileList',
+     'menuNewTab','menuCloseTab','menuSaveChart','menuSaveToFile','menuOpenFile',
+     'menuExportImage','menuPrint','menuResetForm','menuShowSaved','menuManageFiles',
+     'menuImportData','menuExportData','menuClearData','menuGuide','menuAbout',
+     'menuStarDictionary','menuStarSearch','menuChinhTinhInfo','menuPhuTinhInfo',
+     'settingsModal','settingsModalClose','apiKeyInput','apiKeyStatus']
+     .forEach(id=>this.el[id]=document.getElementById(id));
+  }
+  
+  _setupNavMobile(){
+    document.querySelectorAll('.nav-link').forEach(link=>{
+      link.addEventListener('click',e=>{
+        const isMobile=window.innerWidth<=768;
+        if(!isMobile)return;
+        e.preventDefault();
+        e.stopPropagation();
+        const item=link.closest('.nav-item');
+        const isOpen=item.classList.contains('open');
+        document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('open'));
+        if(!isOpen)item.classList.add('open');
+      });
+    });
+    document.addEventListener('click',e=>{
+      if(!e.target.closest('.navbar')){
+        document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('open'));
+      }
+    });
+  }
+
+  _setupEvents(){
+    const h={
+      menuNewTab:()=>this.tm.addTab(),
+      menuCloseTab:()=>this.tm.closeTab(this.tm.cur),
+      menuSaveChart:()=>this.saveCurrentChart(),
+      menuSaveToFile:()=>this.saveCurrentToFile(),
+      menuOpenFile:()=>this.el.fileOpenInput.click(),
+      menuExportImage:()=>this.exportCurrentImage(),
+      menuPrint:()=>window.print(),
+      menuResetForm:()=>{const t=this.tm.getCurrent();if(t)this.resetForm(t.id)},
+      menuShowSaved:()=>this.showSavedChartsModal(),
+      menuManageFiles:()=>this.showFileManagerModal(),
+      menuImportData:()=>this.el.fileImportInput.click(),
+      menuExportData:()=>this.exportCurrentData(),
+      menuClearData:()=>{if(confirm('Bạn có chắc chắn muốn xóa tất cả dữ liệu đã lưu không?')){SafeStorage.clear();this.showNotification('✅ Đã xóa tất cả dữ liệu!')}},
+      menuGuide:()=>alert('📖 Hướng dẫn sử dụng:\n\n1. Nhập thông tin sinh nhật vào form\n2. Nhấn "Lập lá số" để xem kết quả\n3. Nhấp vào tên sao để xem chi tiết\n4. Sử dụng menu để lưu, mở, quản lý nhiều lá số\n\nPhím tắt:\n• Ctrl+T: Tab mới\n• Ctrl+W: Đóng tab\n• Ctrl+S: Lưu lá số\n• Ctrl+O: Mở file\n• Ctrl+P: In lá số'),
+      menuAbout:()=>alert('⭐ Tử Vi Đẩu Số - An Sao Hoàn Chỉnh\n\nPhiên bản: 5.0 (Chi tiết sao)\nTính năng:\n• 14 Chính Tinh + 100+ Phụ Tinh\n• Trường Sinh 12 Vòng + Tứ Hóa\n• Chi tiết tính chất từng sao\n• Quản lý nhiều lá số cùng lúc\n• Lưu/load file JSON'),
+      menuSettings:()=>this.showSettingsModal(),
+      menuShortcuts:()=>alert('⌨️ Phím tắt:\n• Ctrl+T: Tab mới\n• Ctrl+W: Đóng tab\n• Ctrl+S: Lưu lá số\n• Ctrl+O: Mở file\n• Ctrl+P: In lá số\n• Ctrl+D: Từ điển sao'),
+      menuStarDictionary:()=>this.showStarDictionary(),
+      menuStarSearch:()=>{this.showStarDictionary();setTimeout(()=>this.el.starSearchInput?.focus(),100)},
+      menuChinhTinhInfo:()=>this.showChinhTinhInfo(),
+      menuPhuTinhInfo:()=>this.showPhuTinhInfo()
+    };
+    Object.entries(h).forEach(([id,fn])=>{
+      const el=document.getElementById(id);
+      if(el) el.addEventListener('click',e=>{e.preventDefault();fn(e);});
+    });
+    this.el.settingsModalClose?.addEventListener('click',()=>this.closeModal('settingsModal'));
+    this.el.savedModalClose?.addEventListener('click',()=>this.closeModal('savedChartsModal'));
+    this.el.fileModalClose?.addEventListener('click',()=>this.closeModal('fileManagerModal'));
+    this.el.starModalClose?.addEventListener('click',()=>this.closeModal('starDetailModal'));
+    this.el.dictionaryModalClose?.addEventListener('click',()=>this.closeModal('starDictionaryModal'));
+    this.el.fileOpenInput?.addEventListener('change',e=>this.openFileFromDisk(e.target.files[0]));
+    this.el.fileImportInput?.addEventListener('change',e=>this.openFileFromDisk(e.target.files[0]));
+    this.el.starSearchInput?.addEventListener('input',e=>this.filterStarDictionary(e.target.value));
+    document.addEventListener('input',Utils.debounce(e=>{
+      if(e.target.id?.includes('-')){this.tm._saveFormData();this.saveAutoSave();}
+    },500));
+  }
+  
+  _setupStarClicks(){
+    document.addEventListener('click',e=>{
+      const s=e.target.closest('.star-clickable');
+      if(!s)return;
+      e.preventDefault();
+      const name=s.getAttribute('data-star-name')||s.textContent.replace('• ','').trim();
+      const card=s.closest('.cung-card');
+      const cungTen=card?.querySelector('.cung-ten')?.textContent||null;
+      const saoKhac=card?Array.from(card.querySelectorAll('[data-star-name]'))
+        .map(el=>el.getAttribute('data-star-name'))
+        .filter(n=>n&&n!==name):[];
+      this.showStarDetail(name,cungTen,saoKhac);
+    });
+  }
+  
+  _setupKeys(){
+    document.addEventListener('keydown',e=>{
+      if(!e.ctrlKey&&!e.metaKey)return;
+      const sh={t:()=>{e.preventDefault();this.tm.addTab()},w:()=>{e.preventDefault();this.tm.closeTab(this.tm.cur)},s:()=>{e.preventDefault();this.saveCurrentChart()},o:()=>{e.preventDefault();this.el.fileOpenInput.click()},p:()=>{e.preventDefault();window.print()},d:()=>{e.preventDefault();this.showStarDictionary()}};
+      sh[e.key.toLowerCase()]?.();
+      if(e.key==='Escape'){this.closeAllModals();this.closeAllDropdowns();}
+    });
+  }
+  
+  closeAllDropdowns(){
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('open'));
+    document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
+  }
+  closeAllModals(){document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none')}
+  closeModal(id){const m=this.el[id]||document.getElementById(id);if(m)m.style.display='none'}
+  showModal(id){const m=this.el[id]||document.getElementById(id);if(m)m.style.display='flex'}
+  showLoading(t='⏳ Đang an sao và tính toán...'){if(this.el.loadingText)this.el.loadingText.textContent=t;if(this.el.loadingOverlay)this.el.loadingOverlay.style.display='flex'}
+  hideLoading(){if(this.el.loadingOverlay)this.el.loadingOverlay.style.display='none'}
+  showError(msg,tid=null){
+    const id=tid?`error-${tid}`:'error';
+    const el=Utils.getElement(id);
+    if(el){el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',5000);}
+    else alert(msg);
+  }
+  showNotification(msg,dur=3000){
+    const el=this.el.notification;if(!el)return;
+    el.textContent=msg;
+    el.className='notification '+(
+      msg.startsWith('✅')||msg.startsWith('🎉')?'type-success':
+      msg.startsWith('❌')?'type-error':
+      msg.startsWith('⚠️')||msg.startsWith('💡')?'type-warning':'type-info'
+    );
+    el.style.display='block';
+    clearTimeout(el._timer);
+    el._timer=setTimeout(()=>el.style.display='none',dur);
+  }
+  
+  _getNhText(nh){return{hoa:'Hỏa',thuy:'Thủy',moc:'Mộc',kim:'Kim',tho:'Thổ'}[nh]||''}
+  _getCatText(cat){return{'chinh-tinh':'Chính Tinh','phu-tinh-tot':'Phụ Tinh Tốt','phu-tinh-xau':'Phụ Tinh Xấu','trung-tinh':'Trung Tinh','truong-sinh':'Trường Sinh 12 Vòng','hoa-tinh':'Hóa Tinh'}[cat]||cat}
+  
+  showStarDetail(name, cungTen=null, saoKhac=[]){
+    const info=STAR_DESCRIPTIONS[name]||this._getDefaultStarInfo(name);
+    if(!info){this.showNotification(`Không tìm thấy thông tin cho sao "${name}"`);return;}
+    if(this.el.starModalTitle)this.el.starModalTitle.textContent=`⭐ ${name}`;
+    const staticHTML=this._starDetailHTML(name,info);
+    const aiId=`ai-block-${Date.now()}`;
+    const aiBlock=`<div class="ai-section">
+  <div class="ai-section-title">🤖 Phân tích chi tiết</div>
+  <div id="${aiId}" class="ai-loading">
+    <span class="ai-loading-dot">●</span>
+    <span class="ai-loading-dot" style="animation-delay:.3s">●</span>
+    <span class="ai-loading-dot" style="animation-delay:.6s">●</span>
+    &nbsp;Đang tra cứu...
+  </div>
+</div>`;
+    if(this.el.starModalBody)this.el.starModalBody.innerHTML=staticHTML+aiBlock;
+    this.showModal('starDetailModal');
+    this._fetchStarAI(name,info,cungTen,saoKhac,aiId);
+  }
+
+  async _fetchStarAI(name, info, cungTen, saoKhac, targetId){
+    const el=document.getElementById(targetId);
+    if(!el)return;
+    const tab=this.tm.getCurrent();
+    const ctx=tab?.data?.ctx;
+    const contextParts=[];
+    if(ctx) contextParts.push(`Lá số: ${ctx.can} ${ctx.chi}, ${ctx.cucTen}, Mệnh ${ctx.menhCung}, Thân ${ctx.thanCung}`);
+    if(cungTen) contextParts.push(`Sao đang ở: ${cungTen}`);
+    if(saoKhac?.length) contextParts.push(`Cùng cung với: ${saoKhac.join(', ')}`);
+    const prompt=`Bạn là chuyên gia tử vi đẩu số. Hãy giải thích ngắn gọn về sao ${name} trong tử vi.
+${contextParts.length?'Ngữ cảnh: '+contextParts.join('. '):''}
+Trả lời bằng tiếng Việt, tối đa 200 từ, bao gồm:
+1. Ý nghĩa chính của sao ${name}
+2. Ảnh hưởng khi ở ${cungTen||'các cung'}
+3. Đắc địa / hãm địa
+${saoKhac?.length?'4. Tương tác với '+saoKhac.slice(0,3).join(', '):''}
+Viết súc tích, thực tế.`;
+    try{
+      const apiKey=this.getApiKey();
+      if(!apiKey){
+        el.className='ai-error';
+        el.innerHTML='⚠️ Chưa cài đặt API key. <a href="#" onclick="window.tuviApp.closeModal(`starDetailModal`);window.tuviApp.showSettingsModal()" style="color:#764ba2">Cài đặt ngay →</a>';
+        return;
+      }
+      const resp=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key':apiKey,
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1000,
+          messages:[{role:'user',content:prompt}]
+        })
+      });
+      const data=await resp.json();
+      if(!document.getElementById(targetId))return;
+      if(data.content?.[0]?.text){
+        el.className='ai-content';
+        el.textContent=data.content[0].text;
+      } else if(data.error){
+        el.className='ai-error';
+        el.textContent=`Lỗi API: ${data.error.message||'Không xác định'}`;
+      } else {
+        el.className='ai-error';
+        el.textContent='Không thể tải thông tin chi tiết.';
+      }
+    }catch(e){
+      if(document.getElementById(targetId)){
+        el.className='ai-error';
+        el.textContent='Lỗi kết nối. Kiểm tra internet và API key.';
+      }
+    }
+  }
+  
+  _getDefaultStarInfo(name){
+    let cat=CHINH_TINH.has(name)?'chinh-tinh':SAO_XAU.has(name)?'phu-tinh-xau':TUAN_TRIET.has(name)?'trung-tinh':TRUONG_SINH_VONG.has(name)?'truong-sinh':name.includes('Hóa')?'hoa-tinh':'phu-tinh-tot';
+    let nh=null;
+    for(const[h,s]of Object.entries(NGU_HANH_SAO)){if(s.has(name)){nh=h;break;}}
+    if(TRUONG_SINH_NGU_HANH[name])nh=TRUONG_SINH_NGU_HANH[name];
+    return{category:cat,nguHanh:nh,yNghia:`Là ${this._getCatText(cat)}`,tinhChat:cat.includes('xau')?'Xấu':cat.includes('tot')?'Tốt':'Trung tính',tacDung:'Ảnh hưởng đến vận mệnh theo đặc tính của sao',noiDung:`${name} là một trong những sao trong hệ thống tử vi. Chi tiết cần xem xét trong tổng thể lá số.`};
+  }
+  
+  _starDetailHTML(name,info){
+    const nhClass=info.nguHanh?`ngu-hanh-${info.nguHanh}`:'';
+    const tc=info.tinhChat==='Tốt'?'category-tot':info.tinhChat==='Xấu'?'category-xau':'category-trung-tinh';
+    return`<div class="star-detail-section">
+  <div class="star-detail-title">Thông tin cơ bản</div>
+  <div class="star-detail-content">
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      ${info.nguHanh?`<span class="star-ngu-hanh ${nhClass}">Ngũ Hành: ${this._getNhText(info.nguHanh)}</span>`:''}
+      <span class="star-category category-${info.category}">${this._getCatText(info.category)}</span>
+      <span class="star-category ${tc}">Tính chất: ${info.tinhChat}</span>
+    </div>
+  </div>
+</div>
+<div class="star-detail-section"><div class="star-detail-title">Ý nghĩa</div><div class="star-detail-content">${info.yNghia}</div></div>
+<div class="star-detail-section"><div class="star-detail-title">Tác dụng</div><div class="star-detail-content">${info.tacDung}</div></div>
+<div class="star-detail-section"><div class="star-detail-title">Chi tiết</div><div class="star-detail-content">${info.noiDung}</div></div>
+${info.dacTinh?`<div class="star-detail-section"><div class="star-detail-title">Đặc tính</div><div class="star-detail-content">${info.dacTinh}</div></div>`:''}
+<div class="star-detail-section"><div class="star-detail-title">Lưu ý</div><div class="star-detail-content">
+  <div class="star-property">Ảnh hưởng của sao cần xem xét trong tổng thể lá số</div>
+  <div class="star-property">Vị trí và sự tương tác với các sao khác quan trọng hơn tính chất riêng lẻ</div>
+  <div class="star-property">Cần phân biệt giữa đắc địa (mạnh) và hãm địa (yếu) của sao</div>
+</div></div>`;
+  }
+  
+  showStarDetailFromDict(star){
+    this.closeModal('starDictionaryModal');
+    setTimeout(()=>this.showStarDetail(star),150);
+  }
+  _starCardHTML(star,info){
+    return`<div class="star-card"
+  onclick="window.tuviApp.showStarDetailFromDict('${star}')"
+  onmouseover="this.style.backgroundColor='#f5f5f5'"
+  onmouseout="this.style.backgroundColor='white'">
+  <div class="star-card-name">${star}</div>
+  <div class="star-card-meta">
+    <span class="category-${info.category} star-card-cat">${this._getCatText(info.category)}</span>
+    <span>${info.tinhChat}</span>
+  </div>
+</div>`;
+  }
+  
+  showStarDictionary(){
+    const c=this.el.starDictionaryContent;if(!c)return;
+    const stars=Object.keys(STAR_DESCRIPTIONS).sort();
+    c.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">${stars.map(s=>this._starCardHTML(s,STAR_DESCRIPTIONS[s])).join('')}</div>`;
+    this.showModal('starDictionaryModal');
+    this.el.starSearchInput.value='';
+  }
+  
+  filterStarDictionary(q){
+    const c=this.el.starDictionaryContent;if(!c)return;
+    q=q.toLowerCase().trim();
+    const stars=Object.keys(STAR_DESCRIPTIONS).sort().filter(s=>!q||s.toLowerCase().includes(q));
+    c.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">${stars.map(s=>this._starCardHTML(s,STAR_DESCRIPTIONS[s])).join('')}</div>`;
+  }
+  
+  showChinhTinhInfo(){
+    const list=Array.from(CHINH_TINH).sort();
+    let h=`<div style="max-height:500px;overflow-y:auto"><h4 style="color:#764ba2;margin-bottom:15px">✨ 14 Chính Tinh Tử Vi</h4>`;
+    list.forEach(s=>{
+      const i=STAR_DESCRIPTIONS[s];
+      h+=`<div style="margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #eee">
+  <div style="font-weight:bold;color:#3498db;margin-bottom:5px">${s}</div>
+  <div style="font-size:13px;color:#555">${i.yNghia}</div>
+  <div style="font-size:12px;color:#666;margin-top:5px">
+    <span style="background:#e8f4fc;padding:2px 6px;border-radius:3px;margin-right:5px">${i.tinhChat}</span>
+    <span style="background:#eaf7ee;padding:2px 6px;border-radius:3px">Ngũ hành: ${this._getNhText(i.nguHanh)}</span>
+  </div>
+</div>`;
+    });
+    h+='</div>';
+    if(this.el.starModalTitle)this.el.starModalTitle.textContent='✨ 14 Chính Tinh';
+    if(this.el.starModalBody)this.el.starModalBody.innerHTML=h;
+    this.showModal('starDetailModal');
+  }
+  
+  showPhuTinhInfo(){
+    const cats={'Phụ Tinh Tốt':[],'Phụ Tinh Xấu':[],'Trung Tinh':[]};
+    Object.entries(STAR_DESCRIPTIONS).forEach(([s,i])=>{
+      if(i.category==='phu-tinh-tot')cats['Phụ Tinh Tốt'].push(s);
+      else if(i.category==='phu-tinh-xau')cats['Phụ Tinh Xấu'].push(s);
+      else if(i.category==='trung-tinh')cats['Trung Tinh'].push(s);
+    });
+    let h=`<div style="max-height:500px;overflow-y:auto"><h4 style="color:#764ba2;margin-bottom:15px">🌟 Phụ Tinh Tử Vi</h4>`;
+    const colors={'Phụ Tinh Tốt':['#eaf7ee','#27ae60'],'Phụ Tinh Xấu':['#ffeaea','#e74c3c'],'Trung Tinh':['#f5f5f5','#7f8c8d']};
+    Object.entries(cats).forEach(([cat,stars])=>{
+      if(!stars.length)return;
+      const[bg,fg]=colors[cat];
+      h+=`<h5 style="color:#666;margin:15px 0 10px 0">${cat}</h5><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px">`;
+      stars.sort().forEach(s=>{h+=`<span style="background:${bg};color:${fg};padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer" onclick="window.tuviApp.showStarDetail('${s}');window.tuviApp.closeModal('starDetailModal')">${s}</span>`;});
+      h+='</div>';
+    });
+    h+='</div>';
+    if(this.el.starModalTitle)this.el.starModalTitle.textContent='🌟 Phụ Tinh Tử Vi';
+    if(this.el.starModalBody)this.el.starModalBody.innerHTML=h;
+    this.showModal('starDetailModal');
+  }
+  
+  _calcSaoLuu(namXem){
+    const canIdx=((namXem-4)%10+10)%10;
+    const chiIdx=((namXem-4)%12+12)%12;
+    const saoLuu={};
+    const add=(dci,ten)=>{
+      dci=(dci%12+12)%12;
+      if(!saoLuu[dci])saoLuu[dci]=[];
+      saoLuu[dci].push(ten);
+    };
+    SAO_CHI_NAM.forEach((s,i)=>add((chiIdx+i)%12,s));
+    add((4+chiIdx)%12,'Long Trì');
+    add((10-chiIdx+12)%12,'Phượng Các');
+    add((9+chiIdx)%12,'Thiên Đức');
+    add((5+chiIdx)%12,'Nguyệt Đức');
+    const hl=(3-chiIdx+12)%12;
+    add(hl,'Hồng Loan');add((hl+6)%12,'Thiên Hỷ');
+    const dH={5:6,9:6,1:6,11:0,3:0,7:0,8:9,0:9,4:9,2:3,6:3,10:3};
+    if(dH[chiIdx]!==undefined)add(dH[chiIdx],'Đào Hoa');
+    const tM={5:11,9:11,1:11,11:0,3:0,7:0,8:2,0:2,4:2,2:8,6:8,10:8};
+    if(tM[chiIdx]!==undefined)add(tM[chiIdx],'Thiên Mã');
+    const kS={5:2,9:2,1:2,11:8,3:8,7:8,8:5,0:5,4:5,2:11,6:11,10:11};
+    if(kS[chiIdx]!==undefined)add(kS[chiIdx],'Kiếp Sát');
+    const cT={11:2,0:2,1:2,2:5,3:5,4:5,5:8,6:8,7:8,8:11,9:11,10:11};
+    const qT={11:10,0:10,1:10,2:1,3:1,4:1,5:4,6:4,7:4,8:7,9:7,10:7};
+    if(cT[chiIdx]!==undefined)add(cT[chiIdx],'Cô Thần');
+    if(qT[chiIdx]!==undefined)add(qT[chiIdx],'Quả Tú');
+    const pT={0:5,6:5,3:5,9:5,2:9,8:9,5:9,11:9,1:1,4:1,7:1,10:1};
+    if(pT[chiIdx]!==undefined)add(pT[chiIdx],'Phá Toái');
+    const hC={5:1,9:1,1:1,11:7,3:7,7:7,2:10,6:10,10:10,8:4,0:4,4:4};
+    if(hC[chiIdx]!==undefined)add(hC[chiIdx],'Hoa Cái');
+    add((chiIdx+1)%12,'Thiên Không');
+    const locTon=LOC_TON_MAP[canIdx];
+    add(locTon,'Lộc Tồn');add(locTon,'Bác Sĩ');
+    add((locTon+1)%12,'Kình Dương');
+    add((locTon-1+12)%12,'Đà La');
+    ['Lực Sĩ','Thanh Long','Tiểu Hao','Tướng Quân','Tấu Thư','Phi Liêm','Hỷ Thần','Đại Hao','Phục Binh','Quan Phủ','Lưu Hà']
+      .forEach((s,i)=>add((locTon+i+1)%12,s));
+    const tkM=[1,0,0,9,9,7,7,3,3,1];
+    const tvM=[0,10,10,8,8,6,6,2,2,0];
+    add(tkM[canIdx],'Thiên Khôi');
+    add(tvM[canIdx],'Thiên Việt');
+    const tqM=[7,4,5,2,3,9,11,9,10,6],tpM=[9,8,0,11,3,2,6,5,6,5];
+    add(tqM[canIdx],'Thiên Quan');
+    add(tpM[canIdx],'Thiên Phúc');
+    const ttM={0:0,1:6,2:0,3:0,4:6,5:8,6:2,7:6,8:9,9:10};
+    if(ttM[canIdx]!==undefined)add(ttM[canIdx],'Thiên Trù');
+    const lnVTM={0:0,1:6,2:8,3:9,4:8,5:9,6:11,7:0,8:2,9:3};
+    if(lnVTM[canIdx]!==undefined)add(lnVTM[canIdx],'Lưu Niên Văn Tinh');
+    add((locTon+8)%12,'Quốc Ấn');
+    add((locTon-7+12)%12,'Đường Phù');
+    const tuHoa=TU_HOA_MAP[canIdx];
+    if(tuHoa){
+      [['loc','Hóa Lộc'],['quyen','Hóa Quyền'],['khoa','Hóa Khoa'],['ky','Hóa Kỵ']]
+        .forEach(([k,hn])=>add(-1,hn+'|'+tuHoa[k]));
+    }
+    return{saoLuu, canIdx, chiIdx};
+  }
+  // ========== API KEY ==========
+  showSettingsModal(){
+    const saved=SafeStorage.get('tuvi_api_key')||'';
+    if(this.el.apiKeyInput)this.el.apiKeyInput.value=saved;
+    this._updateApiKeyStatus(saved);
+    this.showModal('settingsModal');
+  }
+
+  saveApiKey(){
+    const key=this.el.apiKeyInput?.value?.trim()||'';
+    if(key&&!key.startsWith('sk-ant-')){
+      this.showNotification('❌ API key không hợp lệ. Phải bắt đầu bằng sk-ant-');
+      return;
+    }
+    if(key){
+      SafeStorage.set('tuvi_api_key',key);
+      this.showNotification('✅ Đã lưu API key!');
+    } else {
+      SafeStorage.remove('tuvi_api_key');
+      this.showNotification('🗑️ Đã xóa API key');
+    }
+    this._updateApiKeyStatus(key);
+    this.closeModal('settingsModal');
+  }
+
+  _updateApiKeyStatus(key){
+    const el=this.el.apiKeyStatus;if(!el)return;
+    if(key){
+      const masked=key.substring(0,12)+'...'+key.substring(key.length-4);
+      el.innerHTML=`✅ Đã có key: <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px">${masked}</code>`;
+      el.style.color='#27ae60';
+    } else {
+      el.innerHTML='⚠️ Chưa có key — chức năng phân tích AI sẽ không hoạt động';
+      el.style.color='#e67e22';
+    }
+  }
+
+  toggleApiKeyVisibility(){
+    const inp=this.el.apiKeyInput;
+    const btn=document.getElementById('apiKeyToggle');
+    if(!inp)return;
+    if(inp.type==='password'){inp.type='text';if(btn)btn.textContent='🙈';}
+    else{inp.type='password';if(btn)btn.textContent='👁';}
+  }
+
+  getApiKey(){return SafeStorage.get('tuvi_api_key')||'';}
+
+  onNamXemChange(tid){
+    const el=Utils.getElement(`namXem-${tid}`);
+    const dispEl=document.getElementById(`namXemDisplay-${tid}`);
+    if(!el||!dispEl)return;
+    const nam=parseInt(el.value)||new Date().getFullYear();
+    const canIdx=((nam-4)%10+10)%10;
+    const chiIdx=((nam-4)%12+12)%12;
+    dispEl.textContent=`${THIEN_CAN[canIdx]} ${DIA_CHI[chiIdx]}`;
+  }
+  onHourChange(tid){
+    const el=Utils.getElement(`hour-${tid}`);
+    if(!el)return;
+    const h=parseInt(el.value);
+    if(isNaN(h)||h<0||h>23)return;
+    const chiGio=Math.floor(((h+1)%24)/2)%12;
+    const diaChi=DIA_CHI[chiGio];
+    const dispEl=document.getElementById(`gioDisplay-${tid}`);
+    if(dispEl)dispEl.textContent=`Giờ ${diaChi}`;
+    let warn=el.parentNode.querySelector('.gio-warn');
+    if(h===23){
+      if(!warn){warn=document.createElement('div');warn.className='gio-warn';warn.style.cssText='font-size:11px;color:#e67e22;margin-top:3px';el.parentNode.appendChild(warn);}
+      warn.textContent='⚠️ 23h = giờ Tý, tính cho ngày hôm sau trong tử vi';
+    } else if(warn){warn.remove();}
+  }
+  onSolarDateChange(tid){
+    const sdEl=Utils.getElement(`solarDate-${tid}`);
+    if(!sdEl?.value)return;
+    const [yy,mm,dd]=sdEl.value.split('-').map(Number);
+    const lunar=solar2Lunar(dd,mm,yy);
+    const dEl=Utils.getElement(`day-${tid}`);
+    const mEl=Utils.getElement(`month-${tid}`);
+    const yEl=Utils.getElement(`year-${tid}`);
+    if(dEl)dEl.value=lunar.ngay;
+    if(mEl)mEl.value=lunar.thang;
+    if(yEl)yEl.value=lunar.nam;
+    const canIdx=(lunar.nam-4)%10;
+    const chiIdx=(lunar.nam-4)%12;
+    const canChi=THIEN_CAN[canIdx]+' '+DIA_CHI[chiIdx];
+    let nhuanEl=Utils.getElement(`nhuan-${tid}`);
+    if(!nhuanEl){
+      nhuanEl=document.createElement('input');
+      nhuanEl.type='hidden';nhuanEl.id=`nhuan-${tid}`;
+      sdEl.parentNode.appendChild(nhuanEl);
+    }
+    nhuanEl.value=lunar.nhuan?'1':'0';
+    const dispEl=document.getElementById(`lunarDisplay-${tid}`);
+    if(dispEl){
+      const nhuanTxt=lunar.nhuan?' 🔶 tháng nhuận':'';
+      dispEl.textContent=`${lunar.ngay}/${lunar.thang}/${lunar.nam}${nhuanTxt} — Năm ${canChi}`;
+      dispEl.style.color=lunar.nhuan?'#e67e22':'#27ae60';
+    }
+  }
+  validate(tid){
+    const errs=[];
+    const sdEl=Utils.getElement(`solarDate-${tid}`);
+    if(!sdEl?.value){errs.push('Vui lòng chọn ngày sinh Dương lịch');}
+    else{
+      const d=new Date(sdEl.value);
+      if(isNaN(d)||d.getFullYear()<1900||d.getFullYear()>2100)errs.push('Ngày sinh không hợp lệ');
+    }
+    const dayEl=Utils.getElement(`day-${tid}`);
+    if(!dayEl?.value){
+      errs.push('Không thể tính Âm lịch - vui lòng chọn lại ngày');
+    } else {
+      const sdVal=sdEl?.value;
+      if(sdVal){
+        const [yy,mm,dd]=sdVal.split('-').map(Number);
+        const lunar=solar2Lunar(dd,mm,yy);
+        const tomorrow=new Date(yy,mm-1,dd+1);
+        const lunarTmr=solar2Lunar(tomorrow.getDate(),tomorrow.getMonth()+1,tomorrow.getFullYear());
+        const tryDay30=new Date(yy,mm-1,dd-(lunar.ngay-30));
+        const lunar30=solar2Lunar(tryDay30.getDate(),tryDay30.getMonth()+1,tryDay30.getFullYear());
+        const maxDay=lunar30.thang===lunar.thang?30:29;
+        if(lunar.ngay>maxDay)errs.push(`Tháng ${lunar.thang} AL chỉ có ${maxDay} ngày`);
+      }
+    }
+    const hourEl=Utils.getElement(`hour-${tid}`);
+    const hour=parseInt(hourEl?.value);
+    if(isNaN(hour)||hour<0||hour>23)errs.push('Giờ sinh phải từ 0 đến 23');
+    const gEl=Utils.getElement(`gender-${tid}`);
+    if(!['nam','nu'].includes(gEl?.value))errs.push('Giới tính không hợp lệ');
+    if(errs.length){this.showError(errs.join(', '),tid);return false;}
+    return true;
+  }
+  
+  async lapLaSo(tid=null){
+    const tId=tid||this.tm.cur;
+    if(!tId||!this.validate(tId))return;
+    this.showLoading();
+    try{
+      const g=f=>{const e=Utils.getElement(`${f}-${tId}`);return e?(f==='gender'?e.value:parseInt(e.value)):null};
+      const[day,month,year,hour,gender]=['day','month','year','hour','gender'].map(g);
+      const fullName=Utils.getElement(`fullName-${tId}`)?.value||'';
+      const note=Utils.getElement(`note-${tId}`)?.value||'';
+      const nhuanEl=Utils.getElement(`nhuan-${tId}`);
+      const nhuan=nhuanEl?.value==='1';
+      const namXemEl=Utils.getElement(`namXem-${tId}`);
+      const namXem=parseInt(namXemEl?.value)||new Date().getFullYear();
+      const ctx=new TuViContext(day,month,year,hour,gender,nhuan);
+      if(ctx.tuViIndex===null){this.showError(`Không tìm thấy vị trí Tử Vi cho ngày ${day} với cục ${ctx.cucTen}`,tId);return;}
+      const ans=new AnSaoSystem(ctx);
+      const saoByCung=ans.anTatCa();
+      const laSo=[];
+      for(let i=0;i<12;i++){
+        const ci=(ctx.menhCungIndex+i)%12;
+        laSo.push({ten:CUNG_VI[i],diaChi:DIA_CHI[ci],sao:saoByCung[ci],laMenh:i===0,laThan:ci===ctx.thanCungIndex,cungIndex:ci});
+      }
+      const solarDateEl=Utils.getElement(`solarDate-${tId}`);
+      const solarDate=solarDateEl?.value||'';
+      const lunarDispEl=document.getElementById(`lunarDisplay-${tId}`);
+      const lunarDisp=lunarDispEl?.textContent||`${day}/${month}/${year}`;
+      const cur={ctx,laSo,gender,fullName,note,birthInfo:{ngay:day,thang:month,nam:year,gio:hour},solarDate,lunarDisp,namXem,isDuongNamAmNu:ctx.isDuongNamAmNu,anSaoSystem:ans};
+      this.tm.updateTab(tId,{type:'laso',data:cur,name:fullName||`Lá số ${solarDate||day+'/'+month+'/'+year}`});
+      this.displayResult(tId,cur);
+      this.saveAutoSave();
+      this.showNotification(`✅ Đã lập lá số thành công! Tổng số sao: ${ans.getTong()}`);
+    }catch(e){console.error(e);this.showError('Có lỗi xảy ra khi tính toán: '+e.message,tId);}
+    finally{this.hideLoading();}
+  }
+  
+  _tuHoaPanelHTML(cur){
+    const th=TU_HOA_MAP[cur.ctx.canIndex];
+    if(!th)return '';
+    const hoaMap=[
+      {key:'loc',label:'Hóa Lộc 🟢',cls:'hoa-loc'},
+      {key:'quyen',label:'Hóa Quyền 🟠',cls:'hoa-quyen'},
+      {key:'khoa',label:'Hóa Khoa 🔵',cls:'hoa-khoa'},
+      {key:'ky',label:'Hóa Kỵ 🔴',cls:'hoa-ky'}
+    ];
+    const items=hoaMap.map(({key,label,cls})=>{
+      const saoGoc=th[key];
+      const hoaSao={'loc':'Hóa Lộc','quyen':'Hóa Quyền','khoa':'Hóa Khoa','ky':'Hóa Kỵ'}[key];
+      const cungIdx=cur.anSaoSystem.saoToCung.get(hoaSao)?.[0];
+      const cung=cungIdx!==undefined?cur.laSo.find(c=>c.cungIndex===cungIdx):null;
+      const cungTen=cung?`${cung.ten} (${cung.diaChi})`:'—';
+      return`<div class="tu-hoa-item">
+  <div class="tu-hoa-label">${label}</div>
+  <div class="tu-hoa-sao ${cls}">${saoGoc}</div>
+  <div class="tu-hoa-cung">${cungTen}</div>
+</div>`;
+    }).join('');
+    return`<div class="tu-hoa-panel">
+  <div class="tu-hoa-title">✨ Tứ Hóa — Năm ${cur.ctx.can} ${cur.ctx.chi}</div>
+  <div class="tu-hoa-grid">${items}</div>
+</div>`;
+  }
+  calcNamXemInfo(cur, namXem){
+    const namSinh=cur.birthInfo.nam;
+    const tuoi=namXem-namSinh+1;
+    if(tuoi<1)return null;
+    const ctx=cur.ctx;
+    const step=ctx.isDuongNamAmNu?1:-1;
+    let daiHanTuoi=null, daiHanDci=null;
+    for(let buoc=0;buoc<12;buoc++){
+      const tuoiBD=ctx.cucSo+buoc*10;
+      const tuoiKT=tuoiBD+9;
+      if(tuoi>=tuoiBD&&tuoi<=tuoiKT){
+        daiHanTuoi=tuoiBD;
+        daiHanDci=ctx.isDuongNamAmNu
+          ?(ctx.menhCungIndex+buoc)%12
+          :(ctx.menhCungIndex-buoc+12)%12;
+        break;
+      }
+    }
+    if(daiHanDci===null)return null;
+    const offset=tuoi-daiHanTuoi;
+    const cungs=[];
+    cungs[0]=daiHanDci;
+    cungs[1]=(daiHanDci+6)%12;
+    cungs[2]=(cungs[1]-step+12)%12;
+    for(let i=3;i<10;i++) cungs[i]=(cungs[i-1]+step+12)%12;
+    const luuNienDci=cungs[offset];
+    const canIdx=((namXem-4)%10+10)%10;
+    const chiIdx=((namXem-4)%12+12)%12;
+    const canChiNam=THIEN_CAN[canIdx]+' '+DIA_CHI[chiIdx];
+    const cungLuuNien=cur.laSo.find(c=>c.cungIndex===luuNienDci);
+    const cungTen=cungLuuNien?`${cungLuuNien.ten} (${DIA_CHI[luuNienDci]})`:`(${DIA_CHI[luuNienDci]})`;
+    const cungDH=cur.laSo.find(c=>c.cungIndex===daiHanDci);
+    const cungDHTen=cungDH?`${cungDH.ten} (${DIA_CHI[daiHanDci]})`:`(${DIA_CHI[daiHanDci]})`;
+    const chiNamXem=((namXem-4)%12+12)%12;
+    const lniMap={2:4,6:4,10:4,5:7,9:7,1:7,8:10,0:10,4:10,11:1,3:1,7:1};
+    const startCung=lniMap[ctx.chiIndex];
+    const startNam=ctx.chiIndex;
+    const lni=new Array(12);
+    for(let dci=0;dci<12;dci++){
+      lni[dci]=(cur.gender==='nam')
+        ?(startNam+dci-startCung+120)%12
+        :(startNam+startCung-dci+120)%12;
+    }
+    let tieuHanDci=null;
+    for(let dci=0;dci<12;dci++){
+      if(lni[dci]===chiNamXem){tieuHanDci=dci;break;}
+    }
+    if(tieuHanDci===null)return{tuoi,namXem,canChiNam,daiHanTuoi,daiHanDci,cungDHTen,luuNienDci,cungTen,thangHan:[]};
+    const thangSinh=ctx.thang;
+    const cungThangSinh=(tieuHanDci-(thangSinh-1)+12)%12;
+    const cungThangGieng=(cungThangSinh+ctx.chiGio)%12;
+    const thangHan=[];
+    for(let t=0;t<12;t++) thangHan.push((cungThangGieng+t)%12);
+    return{tuoi,namXem,canChiNam,daiHanTuoi,daiHanDci,cungDHTen,luuNienDci,cungTen,tieuHanDci,thangHan};
+  }
+  _calcLuuNienDaiHan(cur, tuoiDaiHan, cungDci){
+    const namSinh=cur.birthInfo.nam;
+    const namHienTai=new Date().getFullYear();
+    const thuan=cur.ctx.isDuongNamAmNu;
+    const step=thuan?1:-1;
+    const cungs=[];
+    cungs[0]=cungDci;
+    cungs[1]=(cungDci+6)%12;
+    cungs[2]=(cungs[1]-step+12)%12;
+    for(let i=3;i<10;i++){
+      cungs[i]=(cungs[i-1]+step+12)%12;
+    }
+    return cungs.map((dci,i)=>{
+      const tuoi=tuoiDaiHan+i;
+      const namDL=namSinh+tuoi-1;
+      return{tuoi,namDL,chiNam:dci,isNow:namDL===namHienTai};
+    });
+  }
+  showDaiHanDetail(cur, tuoiDaiHan, cungDci, cungTen){
+    const years=this._calcLuuNienDaiHan(cur,tuoiDaiHan,cungDci);
+    const namSinh=cur.birthInfo.nam;
+    const namKet=namSinh+tuoiDaiHan+9-1;
+    const namBD=namSinh+tuoiDaiHan-1;
+    const items=years.map(y=>`
+      <div class="dai-han-nam${y.isNow?' active-year':''}">
+        <div class="dl-year">${y.namDL}${y.isNow?' ◀':''}</div>
+        <div class="al-chi">${DIA_CHI[y.chiNam]}</div>
+        <div class="tuoi">tuổi ${y.tuoi}</div>
+      </div>`).join('');
+    const title=this.el.starModalTitle;
+    const body=this.el.starModalBody;
+    if(title)title.textContent=`📅 Đại Hạn ${tuoiDaiHan}–${tuoiDaiHan+9} tuổi`;
+    if(body)body.innerHTML=`
+      <div style="margin-bottom:12px;padding:10px;background:#f0eafa;border-radius:8px;font-size:13px">
+        <strong>Cung:</strong> ${cungTen} &nbsp;|&nbsp;
+        <strong>Năm DL:</strong> ${namBD} – ${namKet} &nbsp;|&nbsp;
+        <strong>Chiều:</strong> ${cur.ctx.isDuongNamAmNu?'Thuận ➡':'Nghịch ⬅'}
+      </div>
+      <div class="dai-han-modal-grid">${items}</div>
+      <div style="margin-top:12px;font-size:11px;color:#888">
+        ◀ Năm hiện tại (${new Date().getFullYear()}) &nbsp;|&nbsp; Địa chi = Lưu Niên Tiểu Hạn của năm đó
+      </div>`;
+    this.showModal('starDetailModal');
+  }
+  _printHeaderHTML(cur){
+    const dlStr=cur.solarDate?cur.solarDate.split('-').reverse().join('/'):'';
+    const alStr=`${cur.birthInfo.ngay}/${cur.birthInfo.thang}/${cur.birthInfo.nam} AL`;
+    return`<div class="print-header">
+  <h2 style="color:#764ba2;margin:0">⭐ Tử Vi Đẩu Số</h2>
+  <div style="font-size:13px;margin-top:5px">
+    ${cur.fullName?`<strong>${cur.fullName}</strong> — `:''}
+    ${cur.gender==='nam'?'Nam':'Nữ'} | DL: ${dlStr} | AL: ${alStr} | Giờ ${DIA_CHI[cur.ctx.chiGio]}
+    | Năm ${cur.ctx.can} ${cur.ctx.chi} | ${cur.ctx.cucTen}
+    | Mệnh: ${cur.ctx.menhCung} | Thân: ${cur.ctx.thanCung}
+  </div>
+</div>`;
+  }
+  displayResult(tid,cur){
+    const el=Utils.getElement(`result-${tid}`);if(!el)return;
+    el.innerHTML=this._printHeaderHTML(cur)+this._tuHoaPanelHTML(cur)+this._buildLaSoHTML(cur);
+    el.style.display='block';
+  }
+  
+  _getLuuNien(chiIdx,isDuongNamAmNu,gender){
+    const map={2:4,6:4,10:4,5:7,9:7,1:7,8:10,0:10,4:10,11:1,3:1,7:1};
+    const startCung=map[chiIdx];
+    const r=new Array(12);
+    for(let dci=0;dci<12;dci++){
+      r[dci]=(gender==='nam')
+        ?(chiIdx+dci-startCung+120)%12
+        :(chiIdx+startCung-dci+120)%12;
+    }
+    return r;
+  }
+  
+  _buildLaSoHTML(cur){
+    const lni=this._getLuuNien(cur.ctx.chiIndex,cur.ctx.isDuongNamAmNu,cur.gender);
+    const menhDci=cur.ctx.menhCungIndex;
+    const daiHanMap={};
+    for(let buoc=0;buoc<12;buoc++){
+      const dci=cur.ctx.isDuongNamAmNu
+        ?(menhDci+buoc)%12
+        :(menhDci-buoc+12)%12;
+      daiHanMap[dci]=cur.ctx.cucSo+(buoc*10);
+    }
+    const nxi=this.calcNamXemInfo(cur, cur.namXem||new Date().getFullYear());
+    const thangTaiCung={};
+    if(nxi?.thangHan){
+      nxi.thangHan.forEach((dci,idx)=>{
+        if(!thangTaiCung[dci])thangTaiCung[dci]=[];
+        thangTaiCung[dci].push(idx+1);
+      });
+    }
+    const namXem=cur.namXem||new Date().getFullYear();
+    const slData=this._calcSaoLuu(namXem);
+    const saoLuuFinal={};
+    Object.entries(slData.saoLuu).forEach(([dci,arr])=>{
+      if(parseInt(dci)>=0) saoLuuFinal[dci]=[...arr];
+    });
+    if(slData.saoLuu[-1]){
+      slData.saoLuu[-1].forEach(entry=>{
+        const [tenHoa,saoGoc]=entry.split('|');
+        const cungs=cur.anSaoSystem.saoToCung.get(saoGoc);
+        if(cungs?.length){
+          cungs.forEach(dci=>{
+            if(!saoLuuFinal[dci])saoLuuFinal[dci]=[];
+            saoLuuFinal[dci].push(tenHoa);
+          });
+        }
+      });
+    }
+    let h='<div class="la-so-grid">';
+    LAYOUT_DIA_CHI.forEach((dci,pos)=>{
+      if(dci===-1){if(pos===5)h+=this._centerHTML(cur,nxi);return;}
+      const cung=cur.laSo.find(c=>DIA_CHI.indexOf(c.diaChi)===dci);
+      if(!cung)return;
+      const soTuoi=daiHanMap[dci]??'—';
+      const thangsCung=thangTaiCung[dci]||[];
+      const saoLuuCung=saoLuuFinal[DIA_CHI.indexOf(cung.diaChi)]||[];
+      h+=this._cungHTML(cung,cur,lni,soTuoi,thangsCung,nxi,saoLuuCung);
+    });
+    return h+'</div>';
+  }
+  
+  _centerHTML(cur,nxi=null){
+    const dlStr=cur.solarDate?cur.solarDate.split('-').reverse().join('/'):'';
+    const alStr=`${cur.birthInfo.ngay}/${cur.birthInfo.thang}/${cur.birthInfo.nam} AL`;
+    if(!nxi)nxi=this.calcNamXemInfo(cur,cur.namXem||new Date().getFullYear());
+    const namXemStr=nxi
+      ?`<div style="margin-top:8px;padding:8px;background:#fffbe6;border:1px solid #f39c12;border-radius:6px;font-size:12px;text-align:left;line-height:1.7">
+          <strong style="color:#e67e22">📅 Năm xem ${nxi.namXem} (${nxi.canChiNam})</strong><br>
+          ${nxi.tuoi} tuổi | Đại Hạn ${nxi.daiHanTuoi}–${nxi.daiHanTuoi+9}<br>
+          Cung ĐH: <strong>${nxi.cungDHTen}</strong><br>
+          Lưu Niên tại: <strong style="color:#764ba2">${nxi.cungTen}</strong>
+        </div>`
+      :'';
+    return`<div class="center-cell"><div class="center-data">
+  <strong>${cur.ctx.can} ${cur.ctx.chi}</strong><br>
+  ${cur.ctx.cucTen}<br>
+  Giờ ${DIA_CHI[cur.ctx.chiGio]} | Tháng ${cur.ctx.getCanChiThang()}<br>
+  Mệnh: ${cur.ctx.menhCung} | Thân: ${cur.ctx.thanCung}<br>
+  <small style="color:#888">DL: ${dlStr}</small><br>
+  <small style="color:#27ae60">AL: ${alStr}</small><br>
+  ${cur.gender==='nam'?'Nam':'Nữ'}<br>
+  ${cur.fullName?`<strong>${cur.fullName}</strong><br>`:''}
+  ${cur.note?`<small>${cur.note}</small><br>`:''}
+  <small>Tổng sao: ${cur.anSaoSystem.getTong()}</small>
+  ${namXemStr}
+</div></div>`;
+  }
+  
+  _cungHTML(cung,cur,lni,soTuoi,thangsCung=[],nxi=null,saoLuuCung=[]){
+    let bg='#fff',bc='#999',badge='';
+    if(cung.laThan){bg='#e6f7ff';bc='#3498db';badge='<span class="cung-than">THÂN</span>';}
+    else if(cung.laMenh){bg='#fff9e6';bc='#f39c12';}
+    const ct=Utils.filterSaoByType(cung.sao,CHINH_TINH);
+    const ts=Utils.filterSaoByType(cung.sao,TRUONG_SINH_VONG);
+    const tt=Utils.filterSaoByType(cung.sao,TUAN_TRIET);
+    const rest=cung.sao.filter(s=>!CHINH_TINH.has(s)&&!TRUONG_SINH_VONG.has(s)&&!TUAN_TRIET.has(s));
+    const st=rest.filter(s=>!SAO_XAU.has(s));
+    const sx=rest.filter(s=>SAO_XAU.has(s));
+    const ans=cur.anSaoSystem;
+    const dci=DIA_CHI.indexOf(cung.diaChi);
+    const lnChi=DIA_CHI[lni[dci]];
+    let p=`<div class="cung-card" style="background:${bg};border-color:${bc}">
+<div class="cung-header"><div class="cung-ten">${cung.ten} (${cung.diaChi})</div>${badge}</div>
+<div class="cung-content">`;
+    if(ct.length){
+      p+='<div class="chinh-tinh-section">';
+      ct.forEach(s=>p+=`<div class="chinh-tinh-item star-clickable ${ans.getNhClass(s)}" data-star-name="${s}">${s.toUpperCase()}</div>`);
+      p+='</div>';
+    }else{p+='<div class="chinh-tinh-section khong-chinh-tinh"></div>';}
+    if(st.length||sx.length){
+      p+='<div class="sao-columns"><div class="sao-tot">';
+      st.forEach(s=>p+=`<div class="sao-item star-clickable ${ans.getNhClass(s)}" data-star-name="${s}">• ${s}</div>`);
+      p+='</div><div class="sao-xau">';
+      sx.forEach(s=>p+=`<div class="sao-item star-clickable ${ans.getNhClass(s)}" data-star-name="${s}">• ${s}</div>`);
+      p+='</div></div>';
+    }
+    if(tt.length){
+      p+='<div class="tuan-triet-section">';
+      tt.forEach(s=>p+=`<div class="tuan-triet-item star-clickable" data-star-name="${s}">${s.toUpperCase()}</div>`);
+      p+='</div>';
+    }
+    if(saoLuuCung.length){
+      p+='<div class="sao-luu-section">';
+      saoLuuCung.forEach(ten=>{
+        const nhCls=ans.getNhClass(ten);
+        p+=`<div class="sao-luu-item ${nhCls}">★ ${ten}</div>`;
+      });
+      p+='</div>';
+    }
+    if(thangsCung.length&&nxi){
+      p+='<div class="thang-han-section">';
+      thangsCung.forEach(t=>{
+        const isLuuNien=nxi.tieuHanDci===DIA_CHI.indexOf(cung.diaChi);
+        const cls=isLuuNien&&t===1?'thang-han thang-hien-tai':'thang-han';
+        p+=`<span class="${cls}">Tháng ${t}</span> `;
+      });
+      p+='</div>';
+    }
+    const namBD = typeof soTuoi==='number' ? cur.birthInfo.nam+soTuoi-1 : null;
+    const namKT = namBD ? namBD+9 : null;
+    const dciCung = DIA_CHI.indexOf(cung.diaChi);
+    const daiHanHTML = typeof soTuoi==='number'
+      ? `<span class="dai-han-btn"
+           onclick="(()=>{const d=window.tuviApp.tm.getCurrent()?.data;if(d)window.tuviApp.showDaiHanDetail(d,${soTuoi},${dciCung},'${cung.ten} (${cung.diaChi})')})()"
+           title="Click xem chi tiết Lưu Niên"
+         >${soTuoi}–${soTuoi+9}<br><small style="color:#aaa;font-size:9px">${namBD}–${namKT}</small></span>`
+      : '—';
+    p+=`<div class="footer-section">
+<div class="footer-labels">
+  <div class="footer-label">Tiểu Hạn</div>
+  <div class="footer-label">Trường Sinh</div>
+  <div class="footer-label">Đại Hạn ↗</div>
+</div>
+<div class="footer-values">
+  <div class="luu-nien">${lnChi}</div>
+  <div class="truong-sinh">${ts.map((s,i)=>`<span class="star-clickable ${ans.getNhClass(s)}" data-star-name="${s}" style="cursor:pointer">${s}</span>${i<ts.length-1?', ':''}`).join('')}</div>
+  <div class="dai-han">${daiHanHTML}</div>
+</div>
+</div></div></div>`;
+    return p;
+  }
+  
+  resetForm(tid=null){
+    const t=tid||this.tm.cur;if(!t)return;
+    const def={day:'',month:'',year:'',hour:'',gender:'nam',fullName:'',note:'',solarDate:'',lunarDisplay:'',gioDisplay:'',namXem:'',namXemDisplay:''};
+    Object.entries(def).forEach(([f,v])=>{
+      if(f==='lunarDisplay'){const el=document.getElementById(`lunarDisplay-${t}`);if(el){el.textContent='Chọn ngày Dương lịch →';el.style.color='#555';}}
+      else if(f==='gioDisplay'){const el=document.getElementById(`gioDisplay-${t}`);if(el)el.textContent='—';}
+      else if(f==='namXemDisplay'){const el=document.getElementById(`namXemDisplay-${t}`);if(el)el.textContent='';}
+      else{const el=Utils.getElement(`${f}-${t}`);if(el)el.value=v;}
+    });
+    const re=Utils.getElement(`result-${t}`);if(re)re.style.display='none';
+    const ee=Utils.getElement(`error-${t}`);if(ee)ee.style.display='none';
+    this.tm.updateTab(t,{type:'empty',data:null,name:`Lá số ${Array.from(this.tm.tabs.keys()).indexOf(t)+1}`});
+    this.showNotification('🔄 Đã làm lại form thành công!');
+  }
+  
+  _getChartData(tab){
+    return{day:tab.data.birthInfo.ngay,month:tab.data.birthInfo.thang,year:tab.data.birthInfo.nam,hour:tab.data.birthInfo.gio,gender:tab.data.gender,fullName:tab.data.fullName,note:tab.data.note};
+  }
+  
+  saveCurrentChart(){
+    const tab=this.tm.getCurrent();
+    if(!tab?.data){this.showNotification('⚠️ Vui lòng lập lá số trước khi lưu!');return;}
+    try{
+      const d=this._getChartData(tab);
+      const c={id:Date.now(),name:tab.data.fullName||`Lá số ${d.day}/${d.month}/${d.year}`,note:d.note,data:d,timestamp:new Date().toISOString(),canChi:tab.data.ctx?.canChi||'',totalStars:tab.data.anSaoSystem?.getTong()||0};
+      const saved=this.getSavedCharts();saved.unshift(c);if(saved.length>50)saved.pop();
+      SafeStorage.set(this.savedKey,JSON.stringify(saved));
+      this.showNotification(`✅ Đã lưu lá số "${c.name}" thành công!`);
+    }catch(e){this.showNotification('❌ Không thể lưu lá số!');}
+  }
+  
+  getSavedCharts(){try{const s=SafeStorage.get(this.savedKey);return s?JSON.parse(s):[]}catch{return[]}}
+  
+  showSavedChartsModal(){
+    const saved=this.getSavedCharts();
+    const el=this.el.savedChartsList||document.getElementById('savedChartsList');
+    if(!saved.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#666"><div style="font-size:48px;margin-bottom:15px">📭</div><h3>Chưa có lá số nào được lưu</h3><p>Lập lá số và nhấn nút "Lưu lá số" để lưu vào đây.</p></div>';}
+    else{
+      el.innerHTML=saved.map(c=>{
+        const fd=new Date(c.timestamp).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+        return`<div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;padding:15px;margin-bottom:10px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div style="font-weight:bold;color:#764ba2;font-size:16px">${c.name}</div>
+    <div style="font-size:12px;color:#666">${fd}</div>
+  </div>
+  <div style="font-size:13px;color:#555;margin-bottom:8px">📅 ${c.data.day}/${c.data.month}/${c.data.year} | 🕐 Giờ ${c.data.hour} | 👤 ${c.data.gender==='nam'?'Nam':'Nữ'}${c.data.fullName?' | 👤 '+c.data.fullName:''}${c.canChi?' | ⭐ '+c.canChi:''}${c.totalStars?' | ✨ '+c.totalStars+' sao':''}</div>
+  <div style="display:flex;gap:10px;margin-top:10px">
+    <button type="button" onclick="window.tuviApp.loadSavedChart(${c.id})" style="background:#27ae60;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;flex:1">📂 Mở</button>
+    <button type="button" onclick="window.tuviApp.deleteSavedChart(${c.id})" style="background:#e74c3c;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;flex:1">🗑️ Xóa</button>
+  </div>
+</div>`;
+      }).join('');
+    }
+    this.showModal('savedChartsModal');
+  }
+  
+  loadSavedChart(id){
+    const c=this.getSavedCharts().find(x=>x.id===id);
+    if(!c){this.showNotification('❌ Không tìm thấy lá số này!');return;}
+    const tid=this.tm.addTab(c.name,true);
+    setTimeout(()=>{
+      Object.entries(c.data).forEach(([f,v])=>{const el=Utils.getElement(`${f}-${tid}`);if(el)el.value=v;});
+      setTimeout(()=>this.lapLaSo(tid),100);
+    },100);
+    this.closeModal('savedChartsModal');
+  }
+  
+  deleteSavedChart(id){
+    if(!confirm('Bạn có chắc chắn muốn xóa lá số này không?'))return;
+    const f=this.getSavedCharts().filter(c=>c.id!==id);
+    try{SafeStorage.set(this.savedKey,JSON.stringify(f));this.showNotification('🗑️ Đã xóa lá số!');this.showSavedChartsModal();}
+    catch{this.showNotification('❌ Không thể xóa lá số!');}
+  }
+  
+  clearAllSavedCharts(){
+    if(!confirm('Bạn có chắc chắn muốn xóa TẤT CẢ lá số đã lưu không?'))return;
+    try{SafeStorage.remove(this.savedKey);this.showNotification('🗑️ Đã xóa tất cả lá số đã lưu!');this.closeModal('savedChartsModal');}
+    catch{this.showNotification('❌ Không thể xóa tất cả lá số!');}
+  }
+  
+  saveCurrentToFile(){
+    const tab=this.tm.getCurrent();
+    if(!tab?.data){this.showNotification('⚠️ Vui lòng lập lá số trước khi lưu file!');return;}
+    const fd={metadata:{version:'5.0',appName:'Tử Vi Đẩu Số',exportDate:new Date().toISOString(),fileType:'tuvi-laso'},chartData:this._getChartData(tab),canChi:tab.data.ctx?.canChi||'',totalStars:tab.data.anSaoSystem?.getTong()||0};
+    const fn=tab.data.fullName?`tuvi-laso-${tab.data.fullName.replace(/[^a-zA-Z0-9]/g,'-')}-${Date.now()}.json`:`tuvi-laso-${tab.data.birthInfo.ngay}-${tab.data.birthInfo.thang}-${tab.data.birthInfo.nam}-${Date.now()}.json`;
+    const link=document.createElement('a');
+    link.href=URL.createObjectURL(new Blob([JSON.stringify(fd,null,2)],{type:'application/json'}));
+    link.download=fn;link.click();
+    this._saveFileToBrowser(fd,fn);
+    this.showNotification(`✅ Đã lưu lá số thành file: ${fn}`);
+  }
+  
+  _saveFileToBrowser(data,name){
+    try{
+      const files=this._getFiles();
+      files.unshift({id:Date.now(),name,data,timestamp:new Date().toISOString(),size:JSON.stringify(data).length});
+      if(files.length>50)files.pop();
+      SafeStorage.set(this.fileKey,JSON.stringify(files));
+    }catch(e){console.error(e);}
+  }
+  
+  _getFiles(){try{const f=SafeStorage.get(this.fileKey);return f?JSON.parse(f):[]}catch{return[]}}
+  
+  async openFileFromDisk(file){
+    if(!file)return;
+    if(!file.name.endsWith('.json')&&file.type!=='application/json'){this.showNotification('❌ Vui lòng chọn file JSON!');return;}
+    try{
+      const fd=JSON.parse(await file.text());
+      if(!fd.chartData){this.showNotification('❌ File không hợp lệ!');return;}
+      const d=fd.chartData;
+      const tid=this.tm.addTab(d.fullName||`File: ${file.name}`,true);
+      setTimeout(()=>{
+        Object.entries(d).forEach(([f,v])=>{const el=Utils.getElement(`${f}-${tid}`);if(el)el.value=v;});
+        setTimeout(()=>this.lapLaSo(tid),100);
+      },100);
+      this._saveFileToBrowser(fd,file.name);
+      this.showNotification(`✅ Đã tải file "${file.name}" thành công!`);
+    }catch{this.showNotification('❌ File không hợp lệ!');}
+  }
+  
+  showFileManagerModal(){
+    const files=this._getFiles();
+    const el=this.el.fileList||document.getElementById('fileList');
+    if(!files.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#666"><div style="font-size:48px;margin-bottom:15px">📭</div><h3>Chưa có file nào được lưu</h3></div>';}
+    else{
+      el.innerHTML=files.map(f=>{
+        const d=new Date(f.timestamp).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
+        const sk=Math.round(f.size/1024*100)/100;
+        return`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #eee">
+  <div style="flex:1"><div style="font-weight:bold;color:#333">${f.name}</div>
+  <div style="font-size:12px;color:#666">📅 ${d} | 📊 ${sk} KB${f.data.chartData.fullName?' | 👤 '+f.data.chartData.fullName:''}</div></div>
+  <div style="display:flex;gap:5px">
+    <button type="button" onclick="window.tuviApp.loadFileFromBrowser(${f.id})" style="background:#3498db;color:#fff;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px">Mở</button>
+    <button type="button" onclick="window.tuviApp.deleteFileFromBrowser(${f.id})" style="background:#e74c3c;color:#fff;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px">Xóa</button>
+  </div>
+</div>`;
+      }).join('');
+    }
+    this.showModal('fileManagerModal');
+  }
+  
+  loadFileFromBrowser(id){
+    const f=this._getFiles().find(x=>x.id===id);
+    if(!f){this.showNotification('❌ Không tìm thấy file này!');return;}
+    const d=f.data.chartData;
+    const tid=this.tm.addTab(d.fullName||`File: ${f.name}`,true);
+    setTimeout(()=>{
+      Object.entries(d).forEach(([k,v])=>{const el=Utils.getElement(`${k}-${tid}`);if(el)el.value=v;});
+      if(d.solarDate)this.onSolarDateChange(tid);
+      setTimeout(()=>this.lapLaSo(tid),100);
+    },100);
+    this.closeModal('fileManagerModal');
+  }
+  
+  deleteFileFromBrowser(id){
+    if(!confirm('Bạn có chắc chắn muốn xóa file này không?'))return;
+    const f=this._getFiles().filter(x=>x.id!==id);
+    try{SafeStorage.set(this.fileKey,JSON.stringify(f));this.showNotification('🗑️ Đã xóa file!');this.showFileManagerModal();}
+    catch{this.showNotification('❌ Không thể xóa file!');}
+  }
+  
+  exportCurrentImage(){
+    const tab=this.tm.getCurrent();
+    if(!tab?.data){this.showNotification('⚠️ Vui lòng lập lá số trước khi xuất ảnh!');return;}
+    this.showNotification('⚠️ Chức năng xuất ảnh cần thư viện html2canvas.',5000);
+    if(typeof html2canvas!=='undefined'){
+      const g=document.querySelector(`#result-${tab.id} .la-so-grid`);
+      if(g)html2canvas(g).then(c=>{const l=document.createElement('a');l.download=`la-so-${tab.data.birthInfo.ngay}-${tab.data.birthInfo.thang}-${tab.data.birthInfo.nam}.png`;l.href=c.toDataURL('image/png');l.click();this.showNotification('✅ Đã xuất hình ảnh thành công!');});
+    }
+  }
+  
+  exportCurrentData(){
+    const tab=this.tm.getCurrent();
+    if(!tab?.data){this.showNotification('⚠️ Vui lòng lập lá số trước khi xuất dữ liệu!');return;}
+    const d={metadata:{version:'5.0',appName:'Tử Vi Đẩu Số',exportDate:new Date().toISOString()},chartData:this._getChartData(tab),canChi:tab.data.ctx?.canChi||'',totalStars:tab.data.anSaoSystem?.getTong()||0};
+    const l=document.createElement('a');
+    l.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
+    l.download=`tuvi-export-${Date.now()}.json`;l.click();
+    this.showNotification('✅ Đã xuất dữ liệu thành công!');
+  }
+  
+  saveAutoSave(){
+    if(!this.tm?.tabs)return;
+    try{
+      const tabs=Array.from(this.tm.tabs.entries()).map(([id,t])=>({id,name:t.name,type:t.type,formData:t.formData}));
+      SafeStorage.set(this.autoKey,JSON.stringify({tabs,currentTabId:this.tm.cur,lastSave:new Date().toISOString()}));
+    }catch(e){console.error(e);}
+  }
+  
+  loadAutoSave(){
+    try{
+      const s=SafeStorage.get(this.autoKey);if(!s)return;
+      const d=JSON.parse(s);
+      if(d.tabs?.length){
+        this.tm.tabs.clear();
+        this.el.tabsList.innerHTML='';this.el.tabsContent.innerHTML='';
+        d.tabs.forEach(t=>{
+          const id=this.tm.addTab(t.name,false);
+          setTimeout(()=>{
+            Object.entries(t.formData||{}).forEach(([f,v])=>{
+              if(f==='lunarDisplay'){
+                const el=document.getElementById(`lunarDisplay-${id}`);
+                if(el&&v){el.textContent=v;el.style.color='#27ae60';}
+              } else {
+                const el=Utils.getElement(`${f}-${id}`);
+                if(el)el.value=v;
+              }
+            });
+            if(t.formData?.solarDate) this.onSolarDateChange(id);
+            if(t.formData?.hour!==undefined) setTimeout(()=>this.onHourChange(id),80);
+            if(t.formData?.namXem||true) setTimeout(()=>this.onNamXemChange(id),80);
+          },50);
+        });
+        if(d.currentTabId)setTimeout(()=>this.tm.switchTab(d.currentTabId),100);
+      }
+    }catch(e){console.error(e);}
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  window.tuviApp=new TuViApp();
+  if(typeof html2canvas==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+    s.onerror=()=>console.warn('⚠️ html2canvas failed to load');
+    document.head.appendChild(s);
+  }
+});
+</script>
+</body>
+</html>
