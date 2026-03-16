@@ -1171,29 +1171,41 @@ Viết ngắn gọn, thực tế, tránh chung chung.`;
       let text='';
       if(provider==='gemini'){
         // Gemini API
-        // Thử Gemini REST API với key trực tiếp
-        const geminiUrl=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-        const resp=await fetch(geminiUrl,{
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-          },
-          body:JSON.stringify({
-            contents:[{role:'user',parts:[{text:prompt}]}],
-            generationConfig:{maxOutputTokens:400,temperature:0.7,candidateCount:1}
-          })
-        });
-        if(!resp.ok){
-          const errData=await resp.json().catch(()=>({}));
-          throw new Error(errData.error?.message||`HTTP ${resp.status}`);
+        // Thử các model Gemini theo thứ tự ưu tiên
+        const geminiModels=[
+          'gemini-2.0-flash',
+          'gemini-1.5-flash-latest',
+          'gemini-1.5-flash-8b-latest',
+          'gemini-pro'
+        ];
+        let geminiResp=null, geminiData=null;
+        for(const model of geminiModels){
+          const geminiUrl=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+          try{
+            geminiResp=await fetch(geminiUrl,{
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({
+                contents:[{role:'user',parts:[{text:prompt}]}],
+                generationConfig:{maxOutputTokens:400,temperature:0.7}
+              })
+            });
+            geminiData=await geminiResp.json();
+            // Nếu không phải lỗi model không tìm thấy thì dừng
+            if(!geminiData.error?.message?.includes('not found')&&
+               !geminiData.error?.message?.includes('not supported')){
+              break;
+            }
+          }catch(fetchErr){ continue; }
         }
-        const data=await resp.json();
-        if(data.candidates?.[0]?.content?.parts?.[0]?.text){
-          text=data.candidates[0].content.parts[0].text;
-        } else if(data.error){
-          throw new Error(data.error.message||'Gemini API lỗi');
-        } else if(data.promptFeedback?.blockReason){
-          throw new Error('Nội dung bị chặn: '+data.promptFeedback.blockReason);
+        if(geminiData?.candidates?.[0]?.content?.parts?.[0]?.text){
+          text=geminiData.candidates[0].content.parts[0].text;
+        } else if(geminiData?.error){
+          throw new Error(geminiData.error.message||'Gemini API lỗi');
+        } else if(geminiData?.promptFeedback?.blockReason){
+          throw new Error('Nội dung bị chặn: '+geminiData.promptFeedback.blockReason);
+        } else {
+          throw new Error('Không nhận được phản hồi từ Gemini');
         }
       } else {
         // Claude API
