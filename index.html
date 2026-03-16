@@ -1172,7 +1172,7 @@ Viết ngắn gọn, thực tế, tránh chung chung.`;
       if(provider==='gemini'){
         // Gemini API
         // Thử Gemini REST API với key trực tiếp
-        const geminiUrl=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`;
+        const geminiUrl=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
         const resp=await fetch(geminiUrl,{
           method:'POST',
           headers:{
