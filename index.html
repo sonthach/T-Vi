@@ -393,12 +393,16 @@ input:focus,select:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px 
       <!-- Chọn AI provider -->
       <div style="margin-bottom:16px">
         <label style="font-weight:bold;color:#333;display:block;margin-bottom:8px">🤖 Chọn AI phân tích</label>
-        <div style="display:flex;gap:8px">
-          <label style="flex:1;cursor:pointer">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label style="flex:1;cursor:pointer;min-width:120px">
             <input type="radio" name="aiProvider" id="providerGemini" value="gemini" style="margin-right:6px">
             <strong>Gemini</strong> <span style="color:#27ae60;font-size:12px">✓ Miễn phí</span>
           </label>
-          <label style="flex:1;cursor:pointer">
+          <label style="flex:1;cursor:pointer;min-width:120px">
+            <input type="radio" name="aiProvider" id="providerGroq" value="groq" style="margin-right:6px">
+            <strong>Groq</strong> <span style="color:#27ae60;font-size:12px">✓ Miễn phí</span>
+          </label>
+          <label style="flex:1;cursor:pointer;min-width:120px">
             <input type="radio" name="aiProvider" id="providerClaude" value="claude" style="margin-right:6px">
             <strong>Claude</strong> <span style="color:#e67e22;font-size:12px">$ Có phí</span>
           </label>
@@ -423,6 +427,14 @@ input:focus,select:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px 
         3. Nhấn <strong>Create API key</strong> → Copy key<br>
         4. Dán vào ô trên → Nhấn <strong>Lưu</strong><br>
         <span style="color:#27ae60">✓ Hoàn toàn miễn phí · 15 lần/phút · 1 triệu token/ngày</span>
+      </div>
+      <div id="guideGroq" style="display:none;margin-top:12px;padding:12px;background:#f5fff0;border-radius:8px;font-size:13px;color:#555;line-height:1.8">
+        <strong>📋 Lấy Groq API key miễn phí:</strong><br>
+        1. Vào <a href="https://console.groq.com/keys" target="_blank" style="color:#27ae60">console.groq.com/keys</a><br>
+        2. Đăng ký bằng email hoặc Google<br>
+        3. Nhấn <strong>Create API Key</strong> → Copy key<br>
+        4. Dán vào ô trên → Nhấn <strong>Lưu</strong><br>
+        <span style="color:#27ae60">✓ Hoàn toàn miễn phí · Rất nhanh · Không cần thẻ tín dụng</span>
       </div>
       <div id="guideClaude" style="display:none;margin-top:12px;padding:12px;background:#f0f8ff;border-radius:8px;font-size:13px;color:#555;line-height:1.8">
         <strong>📋 Lấy Claude API key:</strong><br>
@@ -1169,7 +1181,35 @@ Viết ngắn gọn, thực tế, tránh chung chung.`;
         return;
       }
       let text='';
-      if(provider==='gemini'){
+      if(provider==='groq'){
+        // Groq API — miễn phí, rất nhanh
+        const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${key}`
+          },
+          body:JSON.stringify({
+            model:'llama-3.1-8b-instant',
+            messages:[
+              {role:'system',content:'Bạn là chuyên gia tử vi đẩu số Việt Nam. Trả lời bằng tiếng Việt, ngắn gọn, thực tế.'},
+              {role:'user',content:prompt}
+            ],
+            max_tokens:400,
+            temperature:0.7
+          })
+        });
+        if(!resp.ok){
+          const errData=await resp.json().catch(()=>({}));
+          throw new Error(errData.error?.message||`Groq lỗi HTTP ${resp.status}`);
+        }
+        const data=await resp.json();
+        if(data.choices?.[0]?.message?.content){
+          text=data.choices[0].message.content;
+        } else {
+          throw new Error('Groq không trả về kết quả');
+        }
+      } else if(provider==='gemini'){
         // Gemini API
         // Thử các model Gemini theo thứ tự ưu tiên
         const geminiModels=[
@@ -1484,14 +1524,16 @@ ${nu?`<div class="sd-gt-block nu"><div class="sd-gt-label">👩 Nữ mệnh</div
 
   _updateProviderGuide(provider){
     const gG=document.getElementById('guideGemini');
+    const gR=document.getElementById('guideGroq');
     const gC=document.getElementById('guideClaude');
     const lbl=document.getElementById('apiKeyLabel');
     if(gG) gG.style.display=provider==='gemini'?'block':'none';
+    if(gR) gR.style.display=provider==='groq'?'block':'none';
     if(gC) gC.style.display=provider==='claude'?'block':'none';
-    if(lbl) lbl.textContent=provider==='gemini'?'🔑 Gemini API Key':'🔑 Claude API Key';
-    if(this.el.apiKeyInput){
-      this.el.apiKeyInput.placeholder=provider==='gemini'?'AIza...':'sk-ant-api03-...';
-    }
+    const labels={gemini:'🔑 Gemini API Key',groq:'🔑 Groq API Key',claude:'🔑 Claude API Key'};
+    const placeholders={gemini:'AIza...',groq:'gsk_...',claude:'sk-ant-api03-...'};
+    if(lbl) lbl.textContent=labels[provider]||'🔑 API Key';
+    if(this.el.apiKeyInput) this.el.apiKeyInput.placeholder=placeholders[provider]||'API key...';
   }
 
   saveApiKey(){
@@ -1504,6 +1546,9 @@ ${nu?`<div class="sd-gt-block nu"><div class="sd-gt-label">👩 Nữ mệnh</div
       }
       if(provider==='gemini'&&!key.startsWith('AIza')){
         this.showNotification('❌ Gemini key phải bắt đầu bằng AIza');return;
+      }
+      if(provider==='groq'&&!key.startsWith('gsk_')){
+        this.showNotification('❌ Groq key phải bắt đầu bằng gsk_');return;
       }
       SafeStorage.set(`tuvi_api_key_${provider}`,key);
       SafeStorage.set('tuvi_ai_provider',provider);
@@ -1518,7 +1563,7 @@ ${nu?`<div class="sd-gt-block nu"><div class="sd-gt-label">👩 Nữ mệnh</div
 
   _updateApiKeyStatus(key,provider){
     const el=this.el.apiKeyStatus;if(!el)return;
-    const name=provider==='gemini'?'Gemini':'Claude';
+    const name={gemini:'Gemini',groq:'Groq',claude:'Claude'}[provider]||provider;
     if(key){
       const masked=key.substring(0,8)+'...'+key.substring(key.length-4);
       el.innerHTML=`✅ ${name} key đã lưu: <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px">${masked}</code>`;
